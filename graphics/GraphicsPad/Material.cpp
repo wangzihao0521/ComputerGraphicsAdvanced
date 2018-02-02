@@ -1,4 +1,5 @@
 #include "Material.h"
+#include "Object.h"
 
 Material* Material::DefaultMaterial = nullptr;
 
@@ -19,7 +20,7 @@ Material::Material(std::string Materialname, char * Vshaderfilename, char * Fsha
 	}
 }
 
-void Material::ExecuteEveryPass(Transform* transform, Camera* cam,unsigned int numIndices, GLsizei screenwidth, GLsizei screenheight)
+void Material::ExecuteEveryPass(Transform* transform, Object* cam,unsigned int numIndices, GLsizei screenwidth, GLsizei screenheight)
 {	
 	for (auto iter = PassArray.begin(); iter != PassArray.end(); iter++)
 	{
@@ -42,16 +43,22 @@ void Material::ReCompileShaders()
 	}
 }
 
-void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Camera* cam, GLsizei screenwidth, GLsizei screenheight)
+void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsizei screenwidth, GLsizei screenheight)
 {
-	glm::mat4 CameraMatrix = cam->getWorldToViewMatrix();
+	if (!cam)
+		return;
+	Camera* Camera_Component = cam->getComponent<Camera>();
+	if (!Camera_Component)
+		return;
+
+	glm::mat4 CameraMatrix = Camera_Component->getWorldToViewMatrix();
 	
 	glm::mat4 projectionMatrix = glm::mat4();
-	if (cam->getPJ_Mode() == Perspective)
+	if (Camera_Component->getPJ_Mode() == Perspective)
 		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 100.0f);
-	else if (cam->getPJ_Mode() == Orthogonal)
+	else if (Camera_Component->getPJ_Mode() == Orthogonal)
 	{
-		float distance = glm::distance(transform->getPosition(), cam->getPosition());
+		float distance = glm::distance(transform->getPosition(), cam->getComponent<Transform>()->getPosition());
 		projectionMatrix = glm::ortho(-distance / 2, distance / 2, -distance / 2, distance / 2, 1.0f, 100.0f);
 	}
 

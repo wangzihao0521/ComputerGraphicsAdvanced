@@ -1,5 +1,6 @@
 #include <Camera.h>
 #include <glm\gtx\transform.hpp>
+#include <Object.h>
 
 const float Camera::Movement_speed = 0.1f;
 const float Camera::Rotation_speed = 0.5f;
@@ -31,7 +32,7 @@ void Camera::mouse_TranslateUpdate(const glm::vec2 & newMousePosition)
 		return;
 	}
 
-	Position += ViewDir * Movement_speed * mouseDelta.x;
+	AddPosition(ViewDir * Movement_speed * mouseDelta.x);
 
 	oldMousePosition = newMousePosition;
 }
@@ -40,44 +41,45 @@ void Camera::CenterOnBoundingBox(glm::vec3 BoundMin, glm::vec3 BoundMax)
 {
 	glm::vec3 CenterPoint = (BoundMax + BoundMin).operator*= (0.5);
 	float ProperDistance = glm::abs(BoundMax.z - CenterPoint.z) + 20.0;
-	Position = CenterPoint + glm::vec3(0, 0, ProperDistance);
+	SetPosition(CenterPoint + glm::vec3(0, 0, ProperDistance));
 	ViewDir = glm::vec3(0.0f, 0.0f, -1.0f);
 	TengentDir = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
-glm::mat4 Camera::getWorldToViewMatrix() const
+glm::mat4 Camera::getWorldToViewMatrix()
 {
+	glm::vec3 Position = getPosition();
 	return glm::lookAt(Position, Position + ViewDir, UpDir);
 }
 
 void Camera::move_forward()
 {
-	Position += ViewDir * Movement_speed;
+	AddPosition(ViewDir * Movement_speed);
 }
 
 void Camera::move_backward()
 {
-	Position += -ViewDir * Movement_speed;
+	AddPosition(-ViewDir * Movement_speed);
 }
 
 void Camera::move_leftward()
 {
-	Position += -TengentDir * Movement_speed;
+	AddPosition(-TengentDir * Movement_speed);
 }
 
 void Camera::move_rightward()
 {
-	Position += TengentDir * Movement_speed;
+	AddPosition(TengentDir * Movement_speed);
 }
 
 void Camera::move_upward()
 {
-	Position += UpDir * Movement_speed;
+	AddPosition(UpDir * Movement_speed);
 }
 
 void Camera::move_downward()
 {
-	Position += -UpDir *Movement_speed;
+	AddPosition(-UpDir *Movement_speed);
 }
 
 void Camera::rotate_left()
@@ -112,4 +114,32 @@ void Camera::rotate_down()
 	//		UpDir = glm::vec3(0, -1, 0);
 	//	if (ViewDir.z < 0)
 	//		UpDir = glm::vec3(0, 1, 0);
+}
+
+glm::vec3 Camera::getPosition()
+{
+	class Transform* transform = object->getComponent<class Transform>();
+	if (transform)
+	{
+		return transform->getPosition();
+	}
+	return glm::vec3();
+}
+
+void Camera::AddPosition(glm::vec3 shift)
+{
+	class Transform* transform = object->getComponent<class Transform>();
+	if (transform)
+	{
+		transform->tranlate(shift);
+	}
+}
+
+void Camera::SetPosition(glm::vec3 pos)
+{
+	class Transform* transform = object->getComponent<class Transform>();
+	if (transform)
+	{
+		transform->setPosition(pos);
+	}
 }

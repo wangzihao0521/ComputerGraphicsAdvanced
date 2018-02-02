@@ -159,12 +159,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Component\Component.h" />
     <ClInclude Include="cyCore.h" />
     <ClInclude Include="cyPoint.h" />
     <ClInclude Include="cyTriMesh.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeGlWindow.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshFilter.h" />
+    <ClInclude Include="Mesh_Renderer.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Renderer.h" />

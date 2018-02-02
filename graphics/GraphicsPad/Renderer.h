@@ -9,13 +9,14 @@ protected:
 	
 	std::vector<Object*> ObjectArray;
 	std::vector<Camera*> CameraArray;
-	Camera* CurrentCamera;
+	std::vector<Mesh*> MeshArray;
+	Object* CurrentCamera;
 	Object* CurrentObject;
 
 	GLsizei ScreenWidth;
 	GLsizei ScreenHeight;
 
-	Object* teapot;
+	
 
 public:
 	Renderer() { }
@@ -23,14 +24,16 @@ public:
 	void init(GLsizei width, GLsizei height,char* argv);
 	void start();
 	void ReCompileALLShader();
-	Object* ImportObj(char* filename);
-	void CreateObjectInScene(Object* obj);
-	Camera* getCurrentCamera() const { return CurrentCamera; }
+	Mesh* ImportObj(char* filename);
+	void PutMeshInScene(Mesh* mesh);
+	void CreateCameraInScene(std::string name);
+	Object* getCurrentCamera() const { return CurrentCamera; }
 	Object* getCurrentObject() const { return CurrentObject; }
+
 
 private:
 	void PushCameraInArray(Camera* cam);
-	Mesh* CompleteMeshWithGeo(cyTriMesh* geo);
+	Mesh* CompleteMeshWithGeo(cyTriMesh* geo, std::string MS_Name);
 	GLuint bindandfillvertexbuffer(cyTriMesh * geometry);
 	GLuint bindandfillindicesbuffer(cyTriMesh * geometry);
 	GLuint bindvertexarray(GLuint vbufferID, GLuint ibufferID);

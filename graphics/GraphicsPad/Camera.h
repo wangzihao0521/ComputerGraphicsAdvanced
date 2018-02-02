@@ -1,5 +1,6 @@
 #pragma once
 #include <glm\glm.hpp>
+#include <Component\Component.h>
 
 
 enum ProjectionMode {
@@ -7,34 +8,23 @@ enum ProjectionMode {
 	Orthogonal = 1
 };
 
-class Camera 
+class Camera : public Component
 {
 public:
-	Camera(char* CamName = "Camera1", glm::vec3 pos = glm::vec3()) :
-		name(CamName),
-		Position(pos),
+	Camera(Object* obj) :
+		Component(obj),
 		ViewDir(0.0f, 0.0f, -1.0f),
 		UpDir(0.0f, 1.0f, 0.0f),
 		TengentDir(1.0f, 0.0f, 0.0f),
 		projection_Mode(Perspective)
 	{}
 
-	glm::mat4 getWorldToViewMatrix() const;
+	glm::mat4 getWorldToViewMatrix();
 
 	void mouse_RotateUpdate(const glm::vec2& newMousePosition);
 	void mouse_TranslateUpdate(const glm::vec2& newMousePosition);
 
 	void CenterOnBoundingBox(glm::vec3 BoundMin, glm::vec3 BoundMax);
-
-	glm::vec3 getPosition() const
-	{
-		return Position;
-	}
-
-	char* getName() const
-	{
-		return name;
-	}
 
 	ProjectionMode getPJ_Mode() const
 	{
@@ -51,10 +41,6 @@ public:
 		else if (projection_Mode == Orthogonal) projection_Mode = Perspective;
 	}
 
-	void setPosition(glm::vec3 NewPosition) {
-		Position = NewPosition;
-	}
-
 	void move_forward();
 	void move_backward();
 	void move_leftward();
@@ -69,16 +55,12 @@ public:
 	void operator = (const Camera cam)
 	{
 		//		Camera camera;
-		name = cam.name;
-		Position = cam.Position;
 		ViewDir = cam.ViewDir;
 		TengentDir = cam.TengentDir;
 		//		return camera;
 	}
 
 protected:
-	char* name;
-	glm::vec3 Position;
 	glm::vec2 oldMousePosition;
 	glm::vec3 ViewDir;
 	glm::vec3 UpDir;
@@ -86,4 +68,10 @@ protected:
 	static const float Rotation_speed;
 	glm::vec3 TengentDir;
 	ProjectionMode projection_Mode;
+
+private:
+	glm::vec3 getPosition();
+	void AddPosition(glm::vec3 shift);
+	void SetPosition(glm::vec3 pos);
+	
 };

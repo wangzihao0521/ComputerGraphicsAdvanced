@@ -1,28 +1,69 @@
 #pragma once
-#include <Material.h>
 #include <Mesh.h>
+#include <MeshFilter.h>
+#include <Transform.h>
+#include <Component\Component.h>
+#include <unordered_map>
+#include <Material.h>
 
+//class Material;
 
 class Object {
 public:
-	Object(Mesh* objMesh = nullptr, std::string objName = "object");
+	Object(std::string objName = "object");
 
-	Transform* getTransform() const { return transform; }
 	glm::vec3 getCurrentBoundBoxMin() const { return CurrentBoundBoxMin; }
 	glm::vec3 getCurrentBoundBoxMax() const { return CurrentBoundBoxMax; }
 
-	void Render(Camera* cam, GLsizei screenwidth, GLsizei screenheight);
+	void Render(Object* cam_obj, GLsizei screenwidth, GLsizei screenheight);
 	void CompileAllMaterial();
 	void ComputeCurrentBoundBox();
 
-	cyTriMesh* getGeometry() const { return mesh->geometry; }
+	template <class T>
+	void AddComponent();
+
+	template <class T>
+	T* getComponent();
+
 protected:
 	std::string name;
-	Mesh* mesh;
-	Transform* transform;
 	std::vector<Material*> MaterialArray;
+
+	std::unordered_map<Component::Type, Component*> Component_Map;
 
 	glm::vec3 CurrentBoundBoxMin;
 	glm::vec3 CurrentBoundBoxMax;
 
 };
+
+template <class T>
+void Object::AddComponent()
+{
+	Component* p = new T(this);
+	Component::Type type = p->getType();
+	if (Component_Map[type] == nullptr)
+	{
+		Component_Map[type] = p;
+		return;
+	}
+	else
+	{
+		printf("Component Already exists");
+		delete p;
+		return;
+	}
+}
+
+template<class T>
+T * Object::getComponent()
+{
+	Component* bp = new T(this);
+	Component::Type type = bp->getType();
+	T* dp = dynamic_cast<T*>(Component_Map[type]);
+
+	if (dp) {
+		return dp;
+	}
+//	printf("Cannot find the Component");
+	return nullptr;
+}

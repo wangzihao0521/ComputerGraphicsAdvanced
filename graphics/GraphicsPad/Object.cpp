@@ -1,25 +1,24 @@
 #include "Object.h"
 
 
-Object::Object(Mesh * objMesh, std::string objName)
+Object::Object(std::string objName)
 {
 	name = objName;
-	mesh = objMesh;
-	transform = new Transform();
 	MaterialArray.push_back(Material::DefaultMaterial);
 	CurrentBoundBoxMin = glm::vec3();
 	CurrentBoundBoxMax = glm::vec3();
+	AddComponent<Transform>();
 }
 
-void Object::Render(Camera* cam, GLsizei screenwidth, GLsizei screenheight)
+void Object::Render(Object* cam_obj, GLsizei screenwidth, GLsizei screenheight)
 {
-	if (mesh)
+	if (getComponent<Mesh_Filter>())
 		for (auto iter = MaterialArray.begin(); iter != MaterialArray.end(); iter++)
 		{
-			glBindVertexArray(mesh->VertexArrayID);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->IndicesBufferID);
-			unsigned int NumIndices = mesh->geometry->NF() * 3;
-			(*iter)->ExecuteEveryPass(transform, cam, NumIndices, screenwidth, screenheight);
+			glBindVertexArray(getComponent<Mesh_Filter>()->getMesh()->getVArrayID());
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getComponent<Mesh_Filter>()->getMesh()->getIBufferID());
+			unsigned int NumIndices = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->NF() * 3;
+			(*iter)->ExecuteEveryPass(getComponent<Transform>(), cam_obj, NumIndices, screenwidth, screenheight);
 		}
 }
 
@@ -37,14 +36,16 @@ void Object::CompileAllMaterial()
 
 void Object::ComputeCurrentBoundBox()
 {
-	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), transform->getPosition());
-	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) *
-		glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
-		glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0));
-	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(), transform->getScale());
+	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), getComponent<Transform>()->getPosition());
+	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), getComponent<Transform>()->getRotation().z, glm::vec3(0, 0, 1)) *
+		glm::rotate(glm::mat4(), getComponent<Transform>()->getRotation().x, glm::vec3(1, 0, 0)) *
+		glm::rotate(glm::mat4(), getComponent<Transform>()->getRotation().y, glm::vec3(0, 1, 0));
+	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(), getComponent<Transform>()->getScale());
 	glm::mat4 Zihao_M2W = TransformMatrix * RotationMatrix * ScaleMatrix;
 
-	float a = getGeometry()->GetBoundMin().y;
-	CurrentBoundBoxMin = glm::vec3(Zihao_M2W * glm::vec4(getGeometry()->GetBoundMin().x, getGeometry()->GetBoundMin().y, getGeometry()->GetBoundMin().z, 1) );
-	CurrentBoundBoxMax = glm::vec3(Zihao_M2W * glm::vec4(getGeometry()->GetBoundMax().x, getGeometry()->GetBoundMax().y, getGeometry()->GetBoundMax().z, 1) );
+	cyPoint3f min = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->GetBoundMin();
+	cyPoint3f max = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->GetBoundMax();
+	CurrentBoundBoxMin = glm::vec3(Zihao_M2W * glm::vec4(min.x, min.y, min.z, 1) );
+	CurrentBoundBoxMax = glm::vec3(Zihao_M2W * glm::vec4(max.x, max.y, max.z, 1) );
 }
+

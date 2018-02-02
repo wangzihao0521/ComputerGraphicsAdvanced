@@ -11,14 +11,16 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 
 	Material::DefaultMaterial = new Material("DefaultMaterial", "DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
 
-	CurrentCamera = new Camera("MainCamera", glm::vec3(0, 8.6, 31.6));
-	PushCameraInArray(CurrentCamera);
+	CreateCameraInScene("MainCamera");
+	Transform* CurCam_Trans = CurrentCamera->getComponent<Transform>();
+	CurCam_Trans->setPosition(glm::vec3(0, 8.6, 31.6));
 
-	teapot = ImportObj(filename);
+	Mesh *teapot = ImportObj(filename);
 	if (!teapot)
 		return;
-	CreateObjectInScene(teapot);
-	teapot->getTransform()->setRotation(glm::vec3(-90, 0, 0));
+	PutMeshInScene(teapot);
+	Transform* CurObj_Trans = CurrentObject->getComponent<Transform>();
+	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
 }
 
 void Renderer::start()
@@ -46,7 +48,7 @@ void Renderer::ReCompileALLShader()
 	}
 }
 
-Object * Renderer::ImportObj(char * filename)
+Mesh * Renderer::ImportObj(char * filename)
 {
 	if (!filename)
 	{
@@ -64,17 +66,31 @@ Object * Renderer::ImportObj(char * filename)
 	{
 		printf("BoundBox Generate Failed");
 	}
-	Mesh* m = CompleteMeshWithGeo(geometry);
-	Object* obj = new Object(m);
+	
+	Mesh* m = CompleteMeshWithGeo(geometry,std::string(filename));
+	MeshArray.push_back(m);
+	return m;
 }
 
-void Renderer::CreateObjectInScene(Object * obj)
+void Renderer::PutMeshInScene(Mesh* mesh)
 {
-	if (!obj)
+	if (!mesh)
 		return;
-
-	ObjectArray.push_back(teapot);
+	std::string MS_Name = mesh->getName();
+	Object* obj = new Object(MS_Name.substr(0,MS_Name.find(".")));
+	obj->AddComponent<Mesh_Filter>();
+	Mesh_Filter* mf = obj->getComponent<Mesh_Filter>();
+	mf->BindMesh(mesh);
+	ObjectArray.push_back(obj);
 	CurrentObject = obj;
+}
+
+void Renderer::CreateCameraInScene(std::string name)
+{
+	Object* obj = new Object(name);
+	obj->AddComponent<Camera>();
+	ObjectArray.push_back(obj);
+	CurrentCamera = obj;
 }
 
 void Renderer::PushCameraInArray(Camera* cam)
@@ -82,12 +98,12 @@ void Renderer::PushCameraInArray(Camera* cam)
 	CameraArray.push_back(cam);
 }
 
-Mesh * Renderer::CompleteMeshWithGeo(cyTriMesh * geometry)
+Mesh * Renderer::CompleteMeshWithGeo(cyTriMesh * geometry, std::string MS_Name)
 {
-	Mesh* m = new Mesh(geometry);
-	m->VertexBufferID = bindandfillvertexbuffer(geometry);
-	m->IndicesBufferID = bindandfillindicesbuffer(geometry);
-	m->VertexArrayID = bindvertexarray(m->VertexBufferID, m->IndicesBufferID);
+	Mesh* m = new Mesh(geometry,MS_Name);
+	m->setVBufferID(bindandfillvertexbuffer(geometry));
+	m->setIBufferID(bindandfillindicesbuffer(geometry));
+	m->setVArrayID(bindvertexarray(m->getVBufferID(), m->getIBufferID()));
 	return m;
 }
 

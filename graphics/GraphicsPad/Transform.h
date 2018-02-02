@@ -1,14 +1,19 @@
 #pragma once
 #include <glm\glm.hpp>
+#include "Component\Component.h"
 
-class Transform {
+class Transform : public Component
+{
 protected:
 	glm::vec3 Position;
 	glm::vec3 Rotation;
 	glm::vec3 Scale;
 public:
-	Transform(glm::vec3 pos = glm::vec3(), glm::vec3 rot = glm::vec3(), glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0)) :
-		Position(pos), Rotation(rot), Scale(scale) {}
+	Transform(Object* obj ,glm::vec3 pos = glm::vec3(), glm::vec3 rot = glm::vec3(), glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0)) :
+		Component(obj),Position(pos), Rotation(rot), Scale(scale) 
+	{
+		type = Component::Type::Transform;
+	}
 	void setPosition(glm::vec3 pos) { Position = pos; }
 	void setRotation(glm::vec3 rot) { Rotation = rot; }
 	void setScale(glm::vec3 scale) { Scale = scale; }

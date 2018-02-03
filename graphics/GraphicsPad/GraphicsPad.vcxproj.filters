@@ -11,6 +11,10 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Component\SubComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh_Renderer.cpp">
+      <Filter>Component\SubComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
@@ -38,10 +42,24 @@
     <ClInclude Include="Mesh_Renderer.h">
       <Filter>Component\SubComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Component\SubComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DefaultVertexShader.glsl" />
-    <None Include="DefaultFragmentShader.glsl" />
+    <None Include="DefaultFragmentShader.glsl">
+      <Filter>ShaderFile</Filter>
+    </None>
+    <None Include="DefaultVertexShader.glsl">
+      <Filter>ShaderFile</Filter>
+    </None>
+    <None Include="StaticFragmentShader.glsl">
+      <Filter>ShaderFile</Filter>
+    </None>
+    <None Include="StaticVertexShader.glsl">
+      <Filter>ShaderFile</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Component">
@@ -49,6 +67,9 @@
     </Filter>
     <Filter Include="Component\SubComponent">
       <UniqueIdentifier>{0bcd5a46-5013-401c-9023-52f0ef67a876}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderFile">
+      <UniqueIdentifier>{58c40709-5251-45cd-af45-1404996b9397}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

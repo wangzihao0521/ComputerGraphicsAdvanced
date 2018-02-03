@@ -10,16 +10,15 @@ Object::Object(std::string objName)
 	AddComponent<Transform>();
 }
 
-void Object::Render(Object* cam_obj, GLsizei screenwidth, GLsizei screenheight)
+void Object::Render(Object* cam_obj, Light* light,GLsizei screenwidth, GLsizei screenheight)
 {
-	if (getComponent<Mesh_Filter>())
-		for (auto iter = MaterialArray.begin(); iter != MaterialArray.end(); iter++)
-		{
-			glBindVertexArray(getComponent<Mesh_Filter>()->getMesh()->getVArrayID());
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getComponent<Mesh_Filter>()->getMesh()->getIBufferID());
-			unsigned int NumIndices = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->NF() * 3;
-			(*iter)->ExecuteEveryPass(getComponent<Transform>(), cam_obj, NumIndices, screenwidth, screenheight);
-		}
+	if (getComponent<Mesh_Filter>() && getComponent<Mesh_Renderer>())
+		getComponent<Mesh_Renderer>()->Render(cam_obj,light, screenwidth, screenheight);
+
+	else if (getComponent<Light>())
+	{
+		StaticRenderer::getInstance()->Render(Light::P_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
+	}
 }
 
 void Object::CompileAllMaterial()

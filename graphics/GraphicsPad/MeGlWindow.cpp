@@ -110,5 +110,6 @@ void MeGlWindow::tryImportFile(char * filename)
 
 void MeGlWindow::updateGL()
 {
+	renderer()->getCurrentObject()->getComponent<Transform>()->rotate(glm::vec3(0.0, 0.0, 0.05));
 	repaint();
 }

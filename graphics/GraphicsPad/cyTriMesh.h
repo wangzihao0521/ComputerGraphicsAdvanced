@@ -172,6 +172,11 @@ namespace cy {
 		GLsizeiptr IndicesBufferSize() const { return (nf * sizeof(unsigned int) * 3); }
 		TriFace* getIndicesptr() const { return f; }
 
+		GLsizeiptr VertexNormal_BufferSize() const { return (nvn * sizeof(Point3f)); }
+		Point3f* get_VertexNormal_ptr() const { return vn; }
+		GLsizeiptr IndicesNormal_BufferSize() const { return (nf * sizeof(unsigned int) * 3); }
+		TriFace* get_IndicesNormal_ptr() const { return fn; }
+
 																															//!@name Get Property Methods
 		bool    IsBoundBoxReady() const { return boundMin.x <= boundMax.x && boundMin.y <= boundMax.y && boundMin.z <= boundMax.z; }	//!< Returns true if the bounding box has been computed.
 		Point3f GetBoundMin() const { return boundMin; }		//!< Returns the minimum values of the bounding box

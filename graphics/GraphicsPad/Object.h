@@ -2,9 +2,11 @@
 #include <Mesh.h>
 #include <MeshFilter.h>
 #include <Transform.h>
-#include <Component\Component.h>
 #include <unordered_map>
-#include <Material.h>
+#include <Mesh_Renderer.h>
+#include <Light.h>
+#include <StaticRenderer.h>
+
 
 //class Material;
 
@@ -15,7 +17,7 @@ public:
 	glm::vec3 getCurrentBoundBoxMin() const { return CurrentBoundBoxMin; }
 	glm::vec3 getCurrentBoundBoxMax() const { return CurrentBoundBoxMax; }
 
-	void Render(Object* cam_obj, GLsizei screenwidth, GLsizei screenheight);
+	void Render(Object* cam_obj,Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void CompileAllMaterial();
 	void ComputeCurrentBoundBox();
 

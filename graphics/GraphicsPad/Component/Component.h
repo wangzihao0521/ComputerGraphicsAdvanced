@@ -1,4 +1,5 @@
 #pragma once
+#include <glm\glm.hpp>
 
 class Object;
 
@@ -19,6 +20,7 @@ public:
 	virtual ~Component(){}
 
 	Type getType() const { return type; }
+	Object* getObject() const { return object; }
 
 protected:
 	Component(Object* obj, Type typ = NonType) :

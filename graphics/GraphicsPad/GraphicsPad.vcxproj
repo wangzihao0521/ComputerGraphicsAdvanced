@@ -152,10 +152,12 @@
     <ClCompile Include="Mainer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeGlWindow.cpp" />
+    <ClCompile Include="Mesh_Renderer.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
+    <ClCompile Include="StaticRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="cyCore.h" />
     <ClInclude Include="cyPoint.h" />
     <ClInclude Include="cyTriMesh.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeGlWindow.h" />
     <ClInclude Include="Mesh.h" />
@@ -172,11 +175,14 @@
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderCompiler.h" />
+    <ClInclude Include="StaticRenderer.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DefaultFragmentShader.glsl" />
     <None Include="DefaultVertexShader.glsl" />
+    <None Include="StaticFragmentShader.glsl" />
+    <None Include="StaticVertexShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

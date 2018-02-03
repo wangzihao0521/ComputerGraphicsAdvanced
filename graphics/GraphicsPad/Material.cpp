@@ -2,6 +2,7 @@
 #include "Object.h"
 
 Material* Material::DefaultMaterial = nullptr;
+glm::vec3 Material::AmbientColor = glm::vec3();
 
 Material::Material(std::string Materialname, char * Vshaderfilename, char * Fshaderfilename)
 {
@@ -20,12 +21,13 @@ Material::Material(std::string Materialname, char * Vshaderfilename, char * Fsha
 	}
 }
 
-void Material::ExecuteEveryPass(Transform* transform, Object* cam,unsigned int numIndices, GLsizei screenwidth, GLsizei screenheight)
+void Material::ExecuteEveryPass(Transform* transform, Object* cam,Light* light,unsigned int numIndices, GLsizei screenwidth, GLsizei screenheight)
 {	
 	for (auto iter = PassArray.begin(); iter != PassArray.end(); iter++)
 	{
 		glUseProgram((*iter)->getProgramID());
 		Add_Zihao_MVP((*iter),transform,cam,screenwidth,screenheight);
+		Add_Light_Uniform(*iter,light);
 		glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
 		
 	}
@@ -63,8 +65,8 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 	}
 
 	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), transform->getPosition());
-	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) *
-		glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
+	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
+		glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) *
 		glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0));
 	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(), transform->getScale());
 	glm::mat4 Zihao_M2W = TransformMatrix * RotationMatrix * ScaleMatrix;
@@ -76,5 +78,18 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 	GLint MVPuniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_MVP");
 	if (MVPuniformLocation >= 0)
 		glUniformMatrix4fv(MVPuniformLocation, 1, GL_FALSE, &Zihao_MVP[0][0]);
+	GLint ViewPosuniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_ViewPosition_WS");
+	if (ViewPosuniformLocation >= 0)
+		glUniform3fv(ViewPosuniformLocation, 1, &cam->getComponent<Transform>()->getPosition()[0]);
+}
+
+void Material::Add_Light_Uniform(Pass * pass, Light* light)
+{
+	GLint LightPosuniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_LightPosition_WS");
+	if (LightPosuniformLocation >= 0)
+		glUniform3fv(LightPosuniformLocation, 1, &light->getObject()->getComponent<class Transform>()->getPosition()[0]);
+	GLint AmbientColoruniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_AmbientColor");
+	if (AmbientColoruniformLocation >= 0)
+		glUniform3fv(AmbientColoruniformLocation, 1, &AmbientColor[0]);
 }
 

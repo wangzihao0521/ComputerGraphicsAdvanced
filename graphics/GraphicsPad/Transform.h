@@ -1,5 +1,4 @@
 #pragma once
-#include <glm\glm.hpp>
 #include "Component\Component.h"
 
 class Transform : public Component

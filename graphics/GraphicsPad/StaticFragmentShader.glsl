@@ -5,5 +5,5 @@ out vec4 pixelcolor;
 
 void main()
 {
-	pixelcolor = vec4(VertexPos,1.0);
+	pixelcolor = vec4(abs(VertexPos),1.0);
 }

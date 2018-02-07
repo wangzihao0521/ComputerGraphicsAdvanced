@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Mainer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeGlWindow.cpp" />

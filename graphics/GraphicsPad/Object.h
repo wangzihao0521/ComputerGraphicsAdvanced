@@ -27,6 +27,9 @@ public:
 	template <class T>
 	T* getComponent();
 
+	static const float Movement_speed;
+	static const float Rotation_speed;
+
 protected:
 	std::string name;
 	std::vector<Material*> MaterialArray;
@@ -34,8 +37,7 @@ protected:
 	std::unordered_map<Component::Type, Component*> Component_Map;
 
 	glm::vec3 CurrentBoundBoxMin;
-	glm::vec3 CurrentBoundBoxMax;
-
+	glm::vec3 CurrentBoundBoxMax;	
 };
 
 template <class T>

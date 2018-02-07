@@ -65,9 +65,9 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 	}
 
 	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), transform->getPosition());
-	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
-		glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) *
-		glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0));
+	glm::mat4 RotationMatrix =  glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0)) *
+								glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
+								glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) ;
 	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(), transform->getScale());
 	glm::mat4 Zihao_M2W = TransformMatrix * RotationMatrix * ScaleMatrix;
 	glm::mat4 Zihao_MVP = projectionMatrix * CameraMatrix * Zihao_M2W;
@@ -87,7 +87,7 @@ void Material::Add_Light_Uniform(Pass * pass, Light* light)
 {
 	GLint LightPosuniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_LightPosition_WS");
 	if (LightPosuniformLocation >= 0)
-		glUniform3fv(LightPosuniformLocation, 1, &light->getObject()->getComponent<class Transform>()->getPosition()[0]);
+		glUniform4fv(LightPosuniformLocation, 1, &light->getLightDirection()[0]);
 	GLint AmbientColoruniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_AmbientColor");
 	if (AmbientColoruniformLocation >= 0)
 		glUniform3fv(AmbientColoruniformLocation, 1, &AmbientColor[0]);

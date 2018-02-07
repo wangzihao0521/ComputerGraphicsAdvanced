@@ -32,9 +32,9 @@ void StaticRenderer::Render(Mesh* mesh,Transform * transform, Object * cam, GLsi
 	}
 
 	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), transform->getPosition());
-	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) *
-		glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
-		glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0));
+	glm::mat4 RotationMatrix =  glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0)) *
+								glm::rotate(glm::mat4(), transform->getRotation().x, glm::vec3(1, 0, 0)) *
+								glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) ;
 	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(), transform->getScale());
 	glm::mat4 Zihao_MVP = projectionMatrix * CameraMatrix *  TransformMatrix * RotationMatrix * ScaleMatrix;
 

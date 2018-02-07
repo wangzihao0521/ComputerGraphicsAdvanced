@@ -1,5 +1,7 @@
 #include "Object.h"
 
+const float Object::Movement_speed = 0.1f;
+const float Object::Rotation_speed = 0.5f;
 
 Object::Object(std::string objName)
 {
@@ -17,7 +19,10 @@ void Object::Render(Object* cam_obj, Light* light,GLsizei screenwidth, GLsizei s
 
 	else if (getComponent<Light>())
 	{
-		StaticRenderer::getInstance()->Render(Light::P_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
+		if (getComponent<Light>()->getLightType() == Light::Type::Point_Light)
+			StaticRenderer::getInstance()->Render(Light::P_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
+		else if (getComponent<Light>()->getLightType() == Light::Type::Directional)
+			StaticRenderer::getInstance()->Render(Light::D_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
 	}
 }
 

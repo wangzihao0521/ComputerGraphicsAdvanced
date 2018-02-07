@@ -64,8 +64,6 @@ protected:
 	glm::vec2 oldMousePosition;
 	glm::vec3 ViewDir;
 	glm::vec3 UpDir;
-	static const float Movement_speed;
-	static const float Rotation_speed;
 	glm::vec3 TengentDir;
 	ProjectionMode projection_Mode;
 

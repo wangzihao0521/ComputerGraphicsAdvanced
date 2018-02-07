@@ -16,7 +16,7 @@ public:
 	void setPosition(glm::vec3 pos) { Position = pos; }
 	void setRotation(glm::vec3 rot) { Rotation = rot; }
 	void setScale(glm::vec3 scale) { Scale = scale; }
-	void tranlate(glm::vec3 Vec3) { Position += Vec3; }
+	void translate(glm::vec3 Vec3) { Position += Vec3; }
 	void rotate(glm::vec3 Vec3) { Rotation += Vec3; }
 	void scale(glm::vec3 Vec3) { Scale *= Vec3; }
 	glm::vec3 getPosition() const { return Position; }

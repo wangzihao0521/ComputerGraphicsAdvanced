@@ -15,6 +15,9 @@
       <Filter>Component\SubComponent</Filter>
     </ClCompile>
     <ClCompile Include="StaticRenderer.cpp" />
+    <ClCompile Include="Light.cpp">
+      <Filter>Component\SubComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />

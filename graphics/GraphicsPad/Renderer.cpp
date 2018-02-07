@@ -12,6 +12,7 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	ScreenWidth = width;
 	ScreenHeight = height;
 	CurrentObject = nullptr;
+	CurrentLight = 0;
 
 	Material::DefaultMaterial = new Material("DefaultMaterial", "DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
 	StaticRenderer::getInstance()->init();
@@ -21,13 +22,15 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	CurCam_Trans->setPosition(glm::vec3(0, 8.6, 31.6));
 
 	Light::P_Light_Mesh = ImportObj("light_bulb.obj");
-	Light::D_Light_Mesh = ImportObj("light_bulb.obj");
+	Light::D_Light_Mesh = ImportObj("Directional_light.obj");
 
 	Object* Light1 = CreateLightInScene("Light1");
 	Light1->getComponent<Transform>()->setPosition(glm::vec3(15.0, 15.0, 0.0));
 
 	Object* Light2 = CreateLightInScene("Light2");
 	Light2->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 15.0, 0.0));
+//	Light2->getComponent<Transform>()->rotate(glm::vec3 (-65.0,0.0,0.0));
+	Light2->getComponent<Light>()->setType(Light::Type::Directional);
 
 	Material::AmbientColor = AmbientColor;
 
@@ -37,6 +40,9 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	PutMeshInScene(teapot);
 	Transform* CurObj_Trans = CurrentObject->getComponent<Transform>();
 	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+//	CurrentObject->AddComponent<Light>();
+//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
+//	PushLightsInArray(CurrentObject->getComponent<Light>());
 }
 
 void Renderer::start()
@@ -45,17 +51,17 @@ void Renderer::start()
 	glViewport(0, 0, ScreenWidth, ScreenHeight);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	std::vector<Light*> All_Lights_In_Scene;
+//	std::vector<Light*> All_Lights_In_Scene;
+//	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
+//	{
+//		if ((*iter)->getComponent<Light>())
+//		{
+//			All_Lights_In_Scene.push_back((*iter)->getComponent<Light>());
+//		}
+//	}
 	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
 	{
-		if ((*iter)->getComponent<Light>())
-		{
-			All_Lights_In_Scene.push_back((*iter)->getComponent<Light>());
-		}
-	}
-	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
-	{
-		for (auto Light_iter = All_Lights_In_Scene.begin(); Light_iter != All_Lights_In_Scene.end(); Light_iter++)
+		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
 		{
 			(*iter)->Render(CurrentCamera, (*Light_iter), ScreenWidth, ScreenHeight);
 			glEnable(GL_BLEND);
@@ -63,7 +69,7 @@ void Renderer::start()
 		}
 		glDisable(GL_BLEND);
 	}
-	All_Lights_In_Scene.clear();
+//	All_Lights_In_Scene.clear();
 	
 	
 }
@@ -130,12 +136,26 @@ Object* Renderer::CreateLightInScene(std::string name)
 	Object* obj = new Object(name);
 	obj->AddComponent<Light>();
 	ObjectArray.push_back(obj);
+	PushLightsInArray(obj->getComponent<Light>());
 	return obj;
+}
+
+void Renderer::SwitchToNextLight()
+{
+	if (CurrentLight == LightArray.size() - 1)
+		CurrentLight = 0;
+	else
+		CurrentLight++;
 }
 
 void Renderer::PushCameraInArray(Camera* cam)
 {
 	CameraArray.push_back(cam);
+}
+
+void Renderer::PushLightsInArray(Light * light)
+{
+	LightArray.push_back(light);
 }
 
 Mesh * Renderer::CompleteMeshWithGeo(cyTriMesh * geometry, std::string MS_Name)

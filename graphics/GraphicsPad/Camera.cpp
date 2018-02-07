@@ -2,9 +2,6 @@
 #include <glm\gtx\transform.hpp>
 #include <Object.h>
 
-const float Camera::Movement_speed = 0.1f;
-const float Camera::Rotation_speed = 0.5f;
-
 void Camera::mouse_RotateUpdate(const glm::vec2 & newMousePosition)
 {
 	glm::vec2 mouseDelta = newMousePosition - oldMousePosition;
@@ -15,8 +12,8 @@ void Camera::mouse_RotateUpdate(const glm::vec2 & newMousePosition)
 	}
 
 	TengentDir = glm::cross(ViewDir, UpDir);
-	glm::mat4 rotator = glm::rotate(-mouseDelta.x * Rotation_speed, UpDir) *
-		glm::rotate(-mouseDelta.y * Rotation_speed, TengentDir);
+	glm::mat4 rotator = glm::rotate(-mouseDelta.x * Object::Rotation_speed, UpDir) *
+		glm::rotate(-mouseDelta.y * Object::Rotation_speed, TengentDir);
 
 	ViewDir = glm::mat3(rotator) * ViewDir;
 
@@ -32,7 +29,7 @@ void Camera::mouse_TranslateUpdate(const glm::vec2 & newMousePosition)
 		return;
 	}
 
-	AddPosition(ViewDir * Movement_speed * mouseDelta.x);
+	AddPosition(ViewDir * Object::Movement_speed * mouseDelta.x);
 
 	oldMousePosition = newMousePosition;
 }
@@ -54,51 +51,51 @@ glm::mat4 Camera::getWorldToViewMatrix()
 
 void Camera::move_forward()
 {
-	AddPosition(ViewDir * Movement_speed);
+	AddPosition(ViewDir * Object::Movement_speed);
 }
 
 void Camera::move_backward()
 {
-	AddPosition(-ViewDir * Movement_speed);
+	AddPosition(-ViewDir * Object::Movement_speed);
 }
 
 void Camera::move_leftward()
 {
-	AddPosition(-TengentDir * Movement_speed);
+	AddPosition(-TengentDir * Object::Movement_speed);
 }
 
 void Camera::move_rightward()
 {
-	AddPosition(TengentDir * Movement_speed);
+	AddPosition(TengentDir * Object::Movement_speed);
 }
 
 void Camera::move_upward()
 {
-	AddPosition(UpDir * Movement_speed);
+	AddPosition(UpDir * Object::Movement_speed);
 }
 
 void Camera::move_downward()
 {
-	AddPosition(-UpDir *Movement_speed);
+	AddPosition(-UpDir * Object::Movement_speed);
 }
 
 void Camera::rotate_left()
 {
-	glm::mat4 rotator = glm::rotate(Rotation_speed, UpDir);
+	glm::mat4 rotator = glm::rotate(Object::Rotation_speed, UpDir);
 	ViewDir = glm::mat3(rotator) * ViewDir;
 	TengentDir = glm::cross(ViewDir, UpDir);
 }
 
 void Camera::rotate_right()
 {
-	glm::mat4 rotator = glm::rotate(-Rotation_speed, UpDir);
+	glm::mat4 rotator = glm::rotate(-Object::Rotation_speed, UpDir);
 	ViewDir = glm::mat3(rotator) * ViewDir;
 	TengentDir = glm::cross(ViewDir, UpDir);
 }
 
 void Camera::rotate_up()
 {
-	glm::mat4 rotator = glm::rotate(Rotation_speed, TengentDir);
+	glm::mat4 rotator = glm::rotate(Object::Rotation_speed, TengentDir);
 	ViewDir = glm::mat3(rotator) * ViewDir;
 	//	if (ViewDir.z > 0)
 	//		UpDir = glm::vec3(0, -1, 0);
@@ -108,7 +105,7 @@ void Camera::rotate_up()
 
 void Camera::rotate_down()
 {
-	glm::mat4 rotator = glm::rotate(-Rotation_speed, TengentDir);
+	glm::mat4 rotator = glm::rotate(-Object::Rotation_speed, TengentDir);
 	ViewDir = glm::mat3(rotator) * ViewDir;
 	//	if (ViewDir.z > 0)
 	//		UpDir = glm::vec3(0, -1, 0);
@@ -131,7 +128,7 @@ void Camera::AddPosition(glm::vec3 shift)
 	class Transform* transform = object->getComponent<class Transform>();
 	if (transform)
 	{
-		transform->tranlate(shift);
+		transform->translate(shift);
 	}
 }
 

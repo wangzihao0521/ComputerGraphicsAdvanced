@@ -10,8 +10,11 @@ protected:
 	std::vector<Object*> ObjectArray;
 	std::vector<Camera*> CameraArray;
 	std::vector<Mesh*> MeshArray;
+	std::vector<Light*> LightArray;
+
 	Object* CurrentCamera;
 	Object* CurrentObject;
+	GLint CurrentLight;
 
 	GLsizei ScreenWidth;
 	GLsizei ScreenHeight;
@@ -23,17 +26,22 @@ public:
 	void start();
 	void ReCompileALLShader();
 	Mesh* ImportObj(char* filename);
+
 	void PutMeshInScene(Mesh* mesh);
 	void CreateCameraInScene(std::string name);
 	Object* CreateLightInScene(std::string name);
+
+	void SwitchToNextLight();
 	Object* getCurrentCamera() const { return CurrentCamera; }
 	Object* getCurrentObject() const { return CurrentObject; }
+	Object* getCurrentLight()  const { return LightArray[CurrentLight]->getObject(); }
 
 
 	static glm::vec3 AmbientColor;
 
 private:
 	void PushCameraInArray(Camera* cam);
+	void PushLightsInArray(Light* light);
 	Mesh* CompleteMeshWithGeo(cyTriMesh* geo, std::string MS_Name);
 	GLuint bindandfillvertexbuffer(cyTriMesh * geometry);
 	GLuint bindandfillindicesbuffer(cyTriMesh * geometry);

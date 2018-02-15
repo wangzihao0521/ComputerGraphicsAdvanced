@@ -2,6 +2,7 @@
 #include <Qt\qtimer.h>
 #include <QtGui\qkeyevent>
 #include <Object.h>
+#include <Vertex_data.h>
 
 class Renderer 
 {
@@ -11,6 +12,7 @@ protected:
 	std::vector<Camera*> CameraArray;
 	std::vector<Mesh*> MeshArray;
 	std::vector<Light*> LightArray;
+	std::vector<Material*>MaterialArray;
 
 	Object* CurrentCamera;
 	Object* CurrentObject;
@@ -44,9 +46,6 @@ private:
 	void PushLightsInArray(Light* light);
 	Mesh* CompleteMeshWithGeo(cyTriMesh* geo, std::string MS_Name);
 	GLuint bindandfillvertexbuffer(cyTriMesh * geometry);
-	GLuint bindandfillindicesbuffer(cyTriMesh * geometry);
-	GLuint bindandfillvertexNormalbuffer(cyTriMesh * geometry);
-	GLuint bindandfillindicesNormalbuffer(cyTriMesh * geometry);
-	GLuint bindvertexarray(GLuint vbufferID, GLuint ibufferID, GLuint vnbufferID, GLuint inbufferID);
+	GLuint bindvertexarray(GLuint vbufferID);
 };
 

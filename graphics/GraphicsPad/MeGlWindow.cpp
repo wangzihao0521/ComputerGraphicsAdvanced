@@ -2,17 +2,20 @@
 
 Renderer* MeGlWindow::Zihao_renderer = nullptr;
 
+
 void MeGlWindow::initializeGL()
 {
 	glewInit();
 	TimerInit();
 	resize(960, 720);
 	renderer()->init(width(),height(),importFileName);
+	
+
 
 }
 
 void MeGlWindow::paintGL()
-{
+{	
 	renderer()->start();
 }
 
@@ -180,6 +183,6 @@ void MeGlWindow::tryImportFile(char * filename)
 
 void MeGlWindow::updateGL()
 {
-	renderer()->getCurrentObject()->getComponent<Transform>()->rotate(glm::vec3(0.0, 0.0, 0.05));
+//	renderer()->getCurrentObject()->getComponent<Transform>()->rotate(glm::vec3(0.0, 0.0, 0.05));
 	repaint();
 }

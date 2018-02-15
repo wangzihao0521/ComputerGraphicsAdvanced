@@ -5,6 +5,7 @@
 #include <Qt\qapplication.h>
 
 
+
 class MeGlWindow : public QGLWidget
 {
 protected:

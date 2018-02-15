@@ -14,6 +14,8 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	CurrentObject = nullptr;
 	CurrentLight = 0;
 
+	TextureManager::getInstance()->init();
+
 	Material::DefaultMaterial = new Material("DefaultMaterial", "DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
 	StaticRenderer::getInstance()->init();
 
@@ -40,6 +42,7 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	PutMeshInScene(teapot);
 	Transform* CurObj_Trans = CurrentObject->getComponent<Transform>();
 	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
 //	CurrentObject->AddComponent<Light>();
 //	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
 //	PushLightsInArray(CurrentObject->getComponent<Light>());
@@ -92,7 +95,12 @@ Mesh * Renderer::ImportObj(char * filename)
 		return nullptr;
 	}
 	cyTriMesh* geometry = new cyTriMesh();
-	bool Loaded = geometry->LoadFromFileObj(filename,false);
+	bool Loaded = geometry->LoadFromFileObj(filename);
+	std::vector<cyTriMesh::TriFace> vt;
+	for (int i = 0; i < geometry->NF(); ++i)
+	{
+		vt.push_back(geometry->FT(i));
+	}
 	if (!Loaded)
 	{
 		printf("File Import Failed");
@@ -103,8 +111,29 @@ Mesh * Renderer::ImportObj(char * filename)
 	{
 		printf("BoundBox Generate Failed");
 	}
+	//Get Obj File Path
+	char *PathName = nullptr;
+	const char* pathEnd = strrchr(filename, '\\');
+	if (!pathEnd) pathEnd = strrchr(filename, '/');
+	if (pathEnd) {
+		int n = int(pathEnd - filename) + 1;
+		PathName = new char[n + 1];
+		strncpy(PathName, filename, n);
+		PathName[n] = '\0';
+	}
 	
-	Mesh* m = CompleteMeshWithGeo(geometry,std::string(filename));
+	Mesh* m = CompleteMeshWithGeo(geometry, (PathName) ? std::string(filename).substr(int(pathEnd - filename) + 1, std::string(filename).length()) : std::string(filename));
+	
+	//Load Material
+	if (m->getGeometry()->NM())
+	{
+		for (int i = 0; i < m->getGeometry()->NM(); ++i)
+		{
+			Material* mtl = new Material(m,m->getGeometry()->M(i), PathName, m->getGeometry()->GetMaterialFirstFace(i), m->getGeometry()->GetMaterialFaceCount(i));
+			MaterialArray.push_back(mtl);		
+		}
+	}
+
 	MeshArray.push_back(m);
 	return m;
 }
@@ -117,8 +146,13 @@ void Renderer::PutMeshInScene(Mesh* mesh)
 	Object* obj = new Object(MS_Name.substr(0,MS_Name.find(".")));
 	obj->AddComponent<Mesh_Filter>();
 	obj->AddComponent<Mesh_Renderer>();
+
 	Mesh_Filter* mf = obj->getComponent<Mesh_Filter>();
 	mf->BindMesh(mesh);
+
+	Mesh_Renderer* mr = obj->getComponent<Mesh_Renderer>();
+	mr->Fill_MT_Array(&MaterialArray);
+
 	ObjectArray.push_back(obj);
 	CurrentObject = obj;
 }
@@ -162,62 +196,38 @@ Mesh * Renderer::CompleteMeshWithGeo(cyTriMesh * geometry, std::string MS_Name)
 {
 	Mesh* m = new Mesh(geometry,MS_Name);
 	m->setVBufferID(bindandfillvertexbuffer(geometry));
-	m->setIBufferID(bindandfillindicesbuffer(geometry));
-	GLuint vnBufferId = bindandfillvertexNormalbuffer(geometry);
-	GLuint inBufferId = bindandfillindicesNormalbuffer(geometry);
-	m->setVArrayID(bindvertexarray(m->getVBufferID(), m->getIBufferID(),vnBufferId,inBufferId));
+	m->setVArrayID(bindvertexarray(m->getVBufferID()));
 	return m;
 }
 
 GLuint Renderer::bindandfillvertexbuffer(cyTriMesh * geometry)
 {
+	std::vector<Vertex_data> All_ver_data;
+	for (int i = 0; i < geometry->NF() * 3; ++i)
+	{
+		Vertex_data vtx(geometry->V(geometry->F(i/3).v[i%3]), geometry->VN(geometry->FN(i / 3).v[i % 3]), geometry->VT(geometry->FT(i / 3).v[i % 3]));
+		All_ver_data.push_back(vtx);
+	}
+
 	GLuint bufferID;
 	glGenBuffers(1, &bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-	glBufferData(GL_ARRAY_BUFFER, geometry->VertexBufferSize(), geometry->getVertexptr(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, All_ver_data.size() * sizeof(Vertex_data), &All_ver_data[0], GL_STATIC_DRAW);
 	return bufferID;
 }
 
-GLuint Renderer::bindandfillindicesbuffer(cyTriMesh * geometry)
-{
-	GLuint bufferID;
-	glGenBuffers(1, &bufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, geometry->IndicesBufferSize(), geometry->getIndicesptr(), GL_STATIC_DRAW);
-	return bufferID;
-}
-
-GLuint Renderer::bindandfillvertexNormalbuffer(cyTriMesh * geometry)
-{
-	GLuint bufferID;
-	glGenBuffers(1, &bufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-	glBufferData(GL_ARRAY_BUFFER, geometry->VertexNormal_BufferSize(), geometry->get_VertexNormal_ptr(), GL_STATIC_DRAW);
-	return bufferID;
-}
-
-GLuint Renderer::bindandfillindicesNormalbuffer(cyTriMesh * geometry)
-{
-	GLuint bufferID;
-	glGenBuffers(1, &bufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, geometry->IndicesNormal_BufferSize(), geometry->get_IndicesNormal_ptr(), GL_STATIC_DRAW);
-	return bufferID;
-}
-
-GLuint Renderer::bindvertexarray(GLuint vbufferID, GLuint ibufferID, GLuint vnbufferID, GLuint inbufferID)
+GLuint Renderer::bindvertexarray(GLuint vbufferID)
 {
 	GLuint GeometryID;
 	glGenVertexArrays(1, &GeometryID);
 	glBindVertexArray(GeometryID);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbufferID);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,3 * sizeof(float), 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibufferID);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 0);
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, vnbufferID);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, inbufferID);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
 
 	return GeometryID;
 }

@@ -7,16 +7,23 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="Camera.cpp">
       <Filter>Component\SubComponent</Filter>
     </ClCompile>
     <ClCompile Include="Mesh_Renderer.cpp">
       <Filter>Component\SubComponent</Filter>
     </ClCompile>
-    <ClCompile Include="StaticRenderer.cpp" />
     <ClCompile Include="Light.cpp">
       <Filter>Component\SubComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderCompiler.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticRenderer.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -28,7 +35,6 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="Component\Component.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -48,7 +54,17 @@
     <ClInclude Include="Light.h">
       <Filter>Component\SubComponent</Filter>
     </ClInclude>
-    <ClInclude Include="StaticRenderer.h" />
+    <ClInclude Include="ShaderCompiler.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticRenderer.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Vertex_data.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DefaultFragmentShader.glsl">
@@ -73,6 +89,9 @@
     </Filter>
     <Filter Include="ShaderFile">
       <UniqueIdentifier>{58c40709-5251-45cd-af45-1404996b9397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{58422bca-0c28-40bb-a6eb-971b20513da6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

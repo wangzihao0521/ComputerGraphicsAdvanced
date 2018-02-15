@@ -159,6 +159,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="StaticRenderer.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -177,7 +178,10 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="StaticRenderer.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Vertex_data.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DefaultFragmentShader.glsl" />

@@ -7,4 +7,4 @@ are using a different version of VS. Figure that out on your own.
 
 If you have any questions or suggestions, please email me at wangzihao0521@hotmail.com. Thank you.
 
-PS: For the first a few commits, set Visual Studio default command arguments to teapot.obj to draw a teapot in the scene. 
+PS: For the Newest commits, set Visual Studio default command arguments to Assets\yoda.obj to draw the character in the scene. 

@@ -12,11 +12,16 @@ public:
 	void Gen_MipMap(Texture* tex);
 	GLfloat getMagFilter(Texture* tex);
 	GLfloat getMinFilter(Texture* tex);
+	Texture* CreateEmptyTexture();
+
+	static Texture* WHITE;
 
 protected:
 	static TextureManager* tex_mng;
+	
 	std::vector<Texture*> TexArray;
 	std::unordered_map<Texture::Tex_Filter, GLfloat> m;
+
 
 };
 

@@ -18,6 +18,7 @@ protected:
 	std::string filename;
 	QImage* img;
 	GLuint TextureID;
+	GLint TexUnitID;
 
 	bool Is_MipMap;
 	bool Have_MipMap;
@@ -26,12 +27,14 @@ protected:
 
 public:
 	Texture(std::string file_name, QImage* image, GLuint textureID) :
-		filename(file_name), img(image), TextureID(textureID),Is_MipMap(false), Have_MipMap(false), Mag_filter(LINEAR), Min_filter(LINEAR) {};
+		filename(file_name), img(image), TextureID(textureID), TexUnitID(-1),Is_MipMap(false), Have_MipMap(false), Mag_filter(LINEAR), Min_filter(LINEAR) {};
 
 //	std::string getName() const { return name; }
 	std::string getFileName() const { return filename; }
 	QImage* getImage() const { return img; }
 	GLuint getTextureID() const { return TextureID; }
+	GLint getTexUnitID() const { return TexUnitID; }
+	void setTexUnitId(GLint i) { TexUnitID = i; }
 	void SetIsMipMap(bool b) { Is_MipMap = b; }
 	void SetHaveMipMap(bool b) { Have_MipMap = b; }
 	bool IsMipMap() {return Is_MipMap; }

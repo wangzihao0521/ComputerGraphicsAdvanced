@@ -17,7 +17,7 @@ protected:
 	QTimer* Timer;
 	char* importFileName = nullptr;
 
-	static Renderer* Zihao_renderer;
+	
 
 public:
 	void keyPressEvent(QKeyEvent*);

@@ -6,9 +6,10 @@
 #include <Mesh_Renderer.h>
 #include <Light.h>
 #include <StaticRenderer.h>
+#include <typeindex>
 
 
-//class Material;
+class ZihaoBehavior;
 
 class Object {
 public:
@@ -20,6 +21,8 @@ public:
 	void Render(Object* cam_obj,Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void CompileAllMaterial();
 	void ComputeCurrentBoundBox();
+	GLint getRenderQueue() const { return RenderQueue; }
+	void setRenderQueue(GLint queue);
 
 	template <class T>
 	void AddComponent();
@@ -27,17 +30,26 @@ public:
 	template <class T>
 	T* getComponent();
 
+	template <class T>
+	void AddCustomComponent();
+
+	template <class T>
+	T* getCustomComponent();
+
 	static const float Movement_speed;
 	static const float Rotation_speed;
 
+	std::unordered_map<std::type_index, ZihaoBehavior*> CustomComponent_Map;
+
 protected:
 	std::string name;
-	std::vector<Material*> MaterialArray;
 
 	std::unordered_map<Component::Type, Component*> Component_Map;
 
 	glm::vec3 CurrentBoundBoxMin;
 	glm::vec3 CurrentBoundBoxMax;	
+
+	GLint RenderQueue;
 };
 
 template <class T>
@@ -66,8 +78,29 @@ T * Object::getComponent()
 	T* dp = dynamic_cast<T*>(Component_Map[type]);
 
 	if (dp) {
+		delete bp;
 		return dp;
 	}
 //	printf("Cannot find the Component");
+	return nullptr;
+}
+
+template <class T>
+void Object::AddCustomComponent()
+{
+	ZihaoBehavior* p = new T(this);
+	std::pair<std::type_index, ZihaoBehavior*> temp(typeid(T), p);
+	CustomComponent_Map.insert(temp);
+
+}
+
+template <class T>
+T* Object::getCustomComponent()
+{
+	if (CustomComponent_Map[typeid(T)])
+	{
+		return dynamic_cast<T*>(CustomComponent_Map[typeid(T)]);
+	}
+	printf("Cannot find the custom component");
 	return nullptr;
 }

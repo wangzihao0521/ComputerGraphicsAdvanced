@@ -14,6 +14,7 @@ public:
 		Mesh_Renderer,
 		Light,
 		Camera,
+		Script,
 		NonType
 	};
 	

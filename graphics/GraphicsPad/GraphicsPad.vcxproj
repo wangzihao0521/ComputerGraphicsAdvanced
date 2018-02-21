@@ -149,11 +149,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Mainer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeGlWindow.cpp" />
     <ClCompile Include="Mesh_Renderer.cpp" />
+    <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -167,12 +169,14 @@
     <ClInclude Include="cyCore.h" />
     <ClInclude Include="cyPoint.h" />
     <ClInclude Include="cyTriMesh.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeGlWindow.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshFilter.h" />
     <ClInclude Include="Mesh_Renderer.h" />
+    <ClInclude Include="Mirror.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Renderer.h" />
@@ -182,10 +186,13 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex_data.h" />
+    <ClInclude Include="ZihaoBehavior.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DefaultFragmentShader.glsl" />
     <None Include="DefaultVertexShader.glsl" />
+    <None Include="MirrorFragmentShader.glsl" />
+    <None Include="MirrorVertexShader.glsl" />
     <None Include="StaticFragmentShader.glsl" />
     <None Include="StaticVertexShader.glsl" />
   </ItemGroup>

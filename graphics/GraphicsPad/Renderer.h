@@ -3,29 +3,33 @@
 #include <QtGui\qkeyevent>
 #include <Object.h>
 #include <Vertex_data.h>
+#include "FrameBuffer.h"
 
 class Renderer 
 {
 protected:
 	
 	std::vector<Object*> ObjectArray;
+	std::vector<Object*> ObjectInSceneArray;
 	std::vector<Camera*> CameraArray;
 	std::vector<Mesh*> MeshArray;
 	std::vector<Light*> LightArray;
 	std::vector<Material*>MaterialArray;
 
-	Object* CurrentCamera;
-	Object* CurrentObject;
+	static Object* CurrentCamera;
+	static Object* MainCamera;
+	static Object* CurrentObject;
 	GLint CurrentLight;
 
-	GLsizei ScreenWidth;
-	GLsizei ScreenHeight;
+	static Renderer* Zihao_renderer;
 	
 public:
 	Renderer() { }
 
 	void init(GLsizei width, GLsizei height,char* argv);
-	void start();
+	static Renderer* getInstance();
+	void RenderToScene();
+	void RenderToTexture(Object* Cam, FrameBuffer* FBO);
 	void ReCompileALLShader();
 	Mesh* ImportObj(char* filename);
 
@@ -34,10 +38,14 @@ public:
 	Object* CreateLightInScene(std::string name);
 
 	void SwitchToNextLight();
-	Object* getCurrentCamera() const { return CurrentCamera; }
-	Object* getCurrentObject() const { return CurrentObject; }
+	static Object* getMainCamera() { return MainCamera; }
+	static Object* getCurrentCamera() { return CurrentCamera; }
+	static Object* getCurrentObject() { return CurrentObject; }
 	Object* getCurrentLight()  const { return LightArray[CurrentLight]->getObject(); }
+	void SortObjAgain() { RenderQueueDirty = true; }
 
+	GLsizei ScreenWidth;
+	GLsizei ScreenHeight;
 
 	static glm::vec3 AmbientColor;
 
@@ -47,5 +55,9 @@ private:
 	Mesh* CompleteMeshWithGeo(cyTriMesh* geo, std::string MS_Name);
 	GLuint bindandfillvertexbuffer(cyTriMesh * geometry);
 	GLuint bindvertexarray(GLuint vbufferID);
+	void QuickSortObjByQueue(int low, int high);
+	int Partition(int low, int high);
+
+	bool RenderQueueDirty;
 };
 

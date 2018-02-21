@@ -7,7 +7,7 @@ class Mesh_Filter : public Component
 {
 public:
 	Mesh_Filter(Object* obj) :
-		Component(obj)
+		Component(obj), mesh(nullptr)
 	{
 		type = Component::Type::Mesh_Filter;
 	}

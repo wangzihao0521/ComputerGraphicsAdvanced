@@ -43,9 +43,13 @@ public:
 	void ExecuteEveryPass(Transform* transform, Object* cam,Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void ReCompileShaders();
 	void set_PathName(std::string path_name) { PathName = path_name; }
+	void set_Facecount(int i) { face_count = i; }
+	void BindMesh(Mesh* msh) { mesh = msh; }
 	Mesh* getMesh() const { return mesh; }
+	void Bind_map_Kd_FBOTexUnit();
 
-	static Material* DefaultMaterial;
+	glm::mat4 MirrorCamMatrix;   //just for implement the mirror conveniently for now. I will add customized properties to material later.
+
 	static glm::vec3 AmbientColor;
 
 private:
@@ -54,3 +58,4 @@ private:
 	void Add_Default_Parameter(Pass* pass);
 	void BindTex_Shader(GLint UniformLocation, int& Tex_Unit_number,Texture* map);
 };
+

@@ -25,6 +25,10 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Mirror.cpp">
+      <Filter>UserScript</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
@@ -65,6 +69,13 @@
     </ClInclude>
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex_data.h" />
+    <ClInclude Include="Mirror.h">
+      <Filter>UserScript</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="ZihaoBehavior.h">
+      <Filter>Component\SubComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="DefaultFragmentShader.glsl">
@@ -79,6 +90,12 @@
     <None Include="StaticVertexShader.glsl">
       <Filter>ShaderFile</Filter>
     </None>
+    <None Include="MirrorVertexShader.glsl">
+      <Filter>ShaderFile\UserShaderFile</Filter>
+    </None>
+    <None Include="MirrorFragmentShader.glsl">
+      <Filter>ShaderFile\UserShaderFile</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Component">
@@ -92,6 +109,12 @@
     </Filter>
     <Filter Include="Managers">
       <UniqueIdentifier>{58422bca-0c28-40bb-a6eb-971b20513da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserScript">
+      <UniqueIdentifier>{0f3de814-b96f-4633-b519-30c7f2960102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderFile\UserShaderFile">
+      <UniqueIdentifier>{94741935-b9a4-40d4-b9dc-e2e7e59b96c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

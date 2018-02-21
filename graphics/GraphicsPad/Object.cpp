@@ -1,14 +1,12 @@
 #include "Object.h"
+#include "Renderer.h"
 
 const float Object::Movement_speed = 0.1f;
 const float Object::Rotation_speed = 0.5f;
 
-Object::Object(std::string objName)
+Object::Object(std::string objName) :
+	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000)
 {
-	name = objName;
-	MaterialArray.push_back(Material::DefaultMaterial);
-	CurrentBoundBoxMin = glm::vec3();
-	CurrentBoundBoxMax = glm::vec3();
 	AddComponent<Transform>();
 }
 
@@ -28,14 +26,16 @@ void Object::Render(Object* cam_obj, Light* light,GLsizei screenwidth, GLsizei s
 
 void Object::CompileAllMaterial()
 {
-	if (MaterialArray.empty())
+	Mesh_Renderer* mr = getComponent<Mesh_Renderer>();
+	if (!mr)
 	{
 		return;
 	}
-	for (auto iter = MaterialArray.begin(); iter != MaterialArray.end(); iter++)
+	if (mr->No_Materials())
 	{
-		(*iter)->ReCompileShaders();
+		return;
 	}
+	mr->ReCompileAllMaterial();
 }
 
 void Object::ComputeCurrentBoundBox()
@@ -51,5 +51,11 @@ void Object::ComputeCurrentBoundBox()
 	cyPoint3f max = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->GetBoundMax();
 	CurrentBoundBoxMin = glm::vec3(Zihao_M2W * glm::vec4(min.x, min.y, min.z, 1) );
 	CurrentBoundBoxMax = glm::vec3(Zihao_M2W * glm::vec4(max.x, max.y, max.z, 1) );
+}
+
+void Object::setRenderQueue(GLint queue)
+{
+	RenderQueue = queue; 
+	Renderer::getInstance()->SortObjAgain();
 }
 

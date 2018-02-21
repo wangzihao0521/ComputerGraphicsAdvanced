@@ -13,6 +13,9 @@ public:
 	}
 	void Render(Object* cam_obj,class Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void Fill_MT_Array(std::vector<Material*> * mat_array);
+	bool No_Materials() { return MaterialArray.empty(); }
+	void ReCompileAllMaterial();
+	Material* getMaterialbyIndex(int i);
 
 protected:
 	std::vector<Material*> MaterialArray;

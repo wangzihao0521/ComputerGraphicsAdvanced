@@ -1,69 +1,98 @@
 #include "Renderer.h"
+#include "Mirror.h"
 
+Renderer* Renderer::Zihao_renderer = nullptr;
 Mesh* Light::D_Light_Mesh = nullptr;
 Mesh* Light::P_Light_Mesh = nullptr;
-glm::vec3 Renderer::AmbientColor = glm::vec3(0.1, 0.1, 0.1);
+Object* Renderer::CurrentCamera = nullptr;
+Object* Renderer::MainCamera = nullptr;
+Object* Renderer::CurrentObject = nullptr;
+glm::vec3 Renderer::AmbientColor = glm::vec3(0.3, 0.3, 0.3);
 
 void Renderer::init(GLsizei width, GLsizei height,char* filename)
 {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, width, height);
+	glCullFace(GL_BACK);
 	ScreenWidth = width;
 	ScreenHeight = height;
-	CurrentObject = nullptr;
 	CurrentLight = 0;
+	RenderQueueDirty = true;
 
 	TextureManager::getInstance()->init();
-
-	Material::DefaultMaterial = new Material("DefaultMaterial", "DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
 	StaticRenderer::getInstance()->init();
 
 	CreateCameraInScene("MainCamera");
+	MainCamera = CurrentCamera;
 	Transform* CurCam_Trans = CurrentCamera->getComponent<Transform>();
-	CurCam_Trans->setPosition(glm::vec3(0, 8.6, 31.6));
+	CurCam_Trans->setPosition(glm::vec3(0, 3.3, 35.6));
 
 	Light::P_Light_Mesh = ImportObj("light_bulb.obj");
 	Light::D_Light_Mesh = ImportObj("Directional_light.obj");
 
 	Object* Light1 = CreateLightInScene("Light1");
-	Light1->getComponent<Transform>()->setPosition(glm::vec3(15.0, 15.0, 0.0));
+	Light1->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 5.0, 3.0));
 
-	Object* Light2 = CreateLightInScene("Light2");
-	Light2->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 15.0, 0.0));
-//	Light2->getComponent<Transform>()->rotate(glm::vec3 (-65.0,0.0,0.0));
-	Light2->getComponent<Light>()->setType(Light::Type::Directional);
+//	Object* Light2 = CreateLightInScene("Light2");
+//	Light2->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 15.0, 0.0));
+////	Light2->getComponent<Transform>()->rotate(glm::vec3 (-65.0,0.0,0.0));
+////	Light2->getComponent<Light>()->setType(Light::Type::Directional);
 
 	Material::AmbientColor = AmbientColor;
 
-	Mesh *teapot = ImportObj(filename);
+	Mesh * mirror = ImportObj("Assets\\mirror.obj");
+	if (!mirror)
+		return;
+	PutMeshInScene(mirror);
+	Transform* CurObj_Trans = CurrentObject->getComponent<Transform>();
+	CurObj_Trans->setScale(glm::vec3(2.8, 5, 1));
+	CurObj_Trans->setPosition(glm::vec3(0, 5, -10));
+//	CurObj_Trans->setRotation(glm::vec3(0, 180, 0));
+	CurrentObject->setRenderQueue(3000);
+	CurrentObject->AddCustomComponent<Mirror>();
+	CurrentObject->getCustomComponent<Mirror>()->Start();
+
+	Mesh *teapot = ImportObj("Assets\\teapot.obj");
 	if (!teapot)
 		return;
 	PutMeshInScene(teapot);
-	Transform* CurObj_Trans = CurrentObject->getComponent<Transform>();
+	CurObj_Trans = CurrentObject->getComponent<Transform>();
 	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
-//	CurrentObject->AddComponent<Light>();
-//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
-//	PushLightsInArray(CurrentObject->getComponent<Light>());
+	CurObj_Trans->setPosition(glm::vec3(-17, -15, -3));
+	CurObj_Trans->setScale(glm::vec3(0.65, 0.65, 0.65));
+	//	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
+	//	CurrentObject->AddComponent<Light>();
+	//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
+	//	PushLightsInArray(CurrentObject->getComponent<Light>());
 }
 
-void Renderer::start()
+Renderer * Renderer::getInstance()
 {
+	if (Zihao_renderer)
+		return Zihao_renderer;
+	Zihao_renderer = new Renderer();
+	return Zihao_renderer;
+}
+
+void Renderer::RenderToScene()
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, ScreenWidth, ScreenHeight);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-//	std::vector<Light*> All_Lights_In_Scene;
-//	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
-//	{
-//		if ((*iter)->getComponent<Light>())
-//		{
-//			All_Lights_In_Scene.push_back((*iter)->getComponent<Light>());
-//		}
-//	}
+	if (RenderQueueDirty)
+	{
+		QuickSortObjByQueue(0, ObjectArray.size()-1);
+		RenderQueueDirty = false;
+	}
 	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
 	{
+		for (auto behavior_iter = (*iter)->CustomComponent_Map.begin(); behavior_iter != (*iter)->CustomComponent_Map.end(); ++behavior_iter)
+		{
+			behavior_iter->second->onWillRenderObject();
+		}
 		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
 		{
 			(*iter)->Render(CurrentCamera, (*Light_iter), ScreenWidth, ScreenHeight);
@@ -71,10 +100,35 @@ void Renderer::start()
 			glBlendFunc(GL_ONE, GL_ONE);
 		}
 		glDisable(GL_BLEND);
+		ObjectInSceneArray.push_back(*iter);
 	}
-//	All_Lights_In_Scene.clear();
+
+	ObjectInSceneArray.clear();
 	
-	
+}
+
+void Renderer::RenderToTexture(Object * Cam, FrameBuffer * FBO)
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO->id);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FBO->ColorTexture->getTextureID(), 0);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, FBO->DepthTexture->getTextureID(), 0);
+	GLuint status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+	assert(status == GL_FRAMEBUFFER_COMPLETE);
+
+	for (auto iter = ObjectInSceneArray.begin(); iter != ObjectInSceneArray.end(); iter++)
+	{
+		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
+		{
+			(*iter)->Render(Cam, (*Light_iter), ScreenWidth, ScreenHeight);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ONE);
+		}
+		glDisable(GL_BLEND);
+	}
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 void Renderer::ReCompileALLShader()
@@ -86,6 +140,7 @@ void Renderer::ReCompileALLShader()
 			(*iter)->CompileAllMaterial();
 		}
 	}
+	RenderQueueDirty = true;
 }
 
 Mesh * Renderer::ImportObj(char * filename)
@@ -155,6 +210,7 @@ void Renderer::PutMeshInScene(Mesh* mesh)
 
 	ObjectArray.push_back(obj);
 	CurrentObject = obj;
+	RenderQueueDirty = true;
 }
 
 void Renderer::CreateCameraInScene(std::string name)
@@ -230,4 +286,34 @@ GLuint Renderer::bindvertexarray(GLuint vbufferID)
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
 
 	return GeometryID;
+}
+
+void Renderer::QuickSortObjByQueue(int low, int high)
+{
+	if (low < high)
+	{
+		int q = Partition(low, high);
+		QuickSortObjByQueue(low, q - 1);
+		QuickSortObjByQueue(q + 1, high);
+	}
+}
+
+int Renderer::Partition(int low, int high)
+{
+	Object* x = ObjectArray[high];
+	int i = low - 1;
+	for (int j = low; j < high; ++j)
+	{
+		if (ObjectArray[j]->getRenderQueue() < x->getRenderQueue())
+		{
+			i++;
+			Object* temp = ObjectArray[i];
+			ObjectArray[i] = ObjectArray[j];
+			ObjectArray[j] = temp;
+		}
+	}
+	ObjectArray[high] = ObjectArray[i + 1];
+	ObjectArray[i + 1] = x;
+
+	return i + 1;
 }

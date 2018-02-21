@@ -17,7 +17,9 @@ public:
 		UpDir(0.0f, 1.0f, 0.0f),
 		TengentDir(1.0f, 0.0f, 0.0f),
 		projection_Mode(Perspective)
-	{}
+	{
+		type = Component::Type::Camera;
+	}
 
 	glm::mat4 getWorldToViewMatrix();
 
@@ -51,6 +53,8 @@ public:
 	void rotate_right();
 	void rotate_up();
 	void rotate_down();
+	inline void setViewDir(glm::vec3 vr);
+	inline glm::vec3 getViewDir() const;
 
 	void operator = (const Camera cam)
 	{
@@ -73,3 +77,13 @@ private:
 	void SetPosition(glm::vec3 pos);
 	
 };
+
+inline void Camera::setViewDir(glm::vec3 vr)
+{
+	ViewDir = vr;
+}
+
+inline glm::vec3 Camera::getViewDir() const
+{
+	return ViewDir;
+}

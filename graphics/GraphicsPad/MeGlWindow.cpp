@@ -1,22 +1,17 @@
 #include <MeGlWindow.h>
 
-Renderer* MeGlWindow::Zihao_renderer = nullptr;
-
-
 void MeGlWindow::initializeGL()
 {
 	glewInit();
 	TimerInit();
 	resize(960, 720);
 	renderer()->init(width(),height(),importFileName);
-	
-
 
 }
 
 void MeGlWindow::paintGL()
 {	
-	renderer()->start();
+	renderer()->RenderToScene();
 }
 
 void MeGlWindow::TimerInit()
@@ -29,13 +24,7 @@ void MeGlWindow::TimerInit()
 
 Renderer* MeGlWindow::renderer()
 {
-	if (Zihao_renderer)
-		return Zihao_renderer;
-	else
-	{
-		Zihao_renderer = new Renderer();
-		return Zihao_renderer;
-	}
+	return Renderer::getInstance();
 }
 
 void MeGlWindow::keyPressEvent(QKeyEvent * e)
@@ -100,40 +89,40 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 		case Qt::Key::Key_Escape:
 			qApp->quit();
 		case Qt::Key::Key_W:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->move_forward();
+			renderer()->getMainCamera()->getComponent<Camera>()->move_forward();
 			break;
 		case Qt::Key::Key_S:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->move_backward();
+			renderer()->getMainCamera()->getComponent<Camera>()->move_backward();
 			break;
 		case Qt::Key::Key_A:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->move_leftward();
+			renderer()->getMainCamera()->getComponent<Camera>()->move_leftward();
 			break;
 		case Qt::Key::Key_D:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->move_rightward();
+			renderer()->getMainCamera()->getComponent<Camera>()->move_rightward();
 			break;
 		case Qt::Key::Key_R:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->move_upward();
+			renderer()->getMainCamera()->getComponent<Camera>()->move_upward();
 			break;
 		case Qt::Key::Key_F:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->move_downward();
+			renderer()->getMainCamera()->getComponent<Camera>()->move_downward();
 			break;
 		case Qt::Key::Key_Q:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->rotate_left();
+			renderer()->getMainCamera()->getComponent<Camera>()->rotate_left();
 			break;
 		case Qt::Key::Key_E:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->rotate_right();
+			renderer()->getMainCamera()->getComponent<Camera>()->rotate_right();
 			break;
 		case Qt::Key::Key_Z:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->rotate_up();
+			renderer()->getMainCamera()->getComponent<Camera>()->rotate_up();
 			break;
 		case Qt::Key::Key_C:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->rotate_down();
+			renderer()->getMainCamera()->getComponent<Camera>()->rotate_down();
 			break;
 		case Qt::Key::Key_F6:
 			renderer()->ReCompileALLShader();
 			break;
 		case Qt::Key::Key_P:
-			renderer()->getCurrentCamera()->getComponent<Camera>()->ChangePJ_Mode();
+			renderer()->getMainCamera()->getComponent<Camera>()->ChangePJ_Mode();
 			break;
 		case Qt::Key::Key_Tab:
 			renderer()->SwitchToNextLight();
@@ -142,7 +131,7 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 		{
 			Object* Cur_obj = renderer()->getCurrentObject();
 			Cur_obj->ComputeCurrentBoundBox();
-			renderer()->getCurrentCamera()->getComponent<Camera>()->CenterOnBoundingBox(Cur_obj->getCurrentBoundBoxMin(), Cur_obj->getCurrentBoundBoxMax());
+			renderer()->getMainCamera()->getComponent<Camera>()->CenterOnBoundingBox(Cur_obj->getCurrentBoundBoxMin(), Cur_obj->getCurrentBoundBoxMax());
 			break;
 		}
 		default:
@@ -165,12 +154,12 @@ void MeGlWindow::mouseMoveEvent(QMouseEvent* e)
 	{
 		if (e->buttons() == Qt::LeftButton)
 		{
-			renderer()->getCurrentCamera()->getComponent<Camera>()->mouse_RotateUpdate(glm::vec2(e->x(), e->y()));
+			renderer()->getMainCamera()->getComponent<Camera>()->mouse_RotateUpdate(glm::vec2(e->x(), e->y()));
 			repaint();
 		}
 		else if (e->buttons() == Qt::RightButton)
 		{
-			renderer()->getCurrentCamera()->getComponent<Camera>()->mouse_TranslateUpdate(glm::vec2(e->x(), e->y()));
+			renderer()->getMainCamera()->getComponent<Camera>()->mouse_TranslateUpdate(glm::vec2(e->x(), e->y()));
 			repaint();
 		}
 	}

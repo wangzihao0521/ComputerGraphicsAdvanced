@@ -15,6 +15,7 @@ public:
 	void Fill_MT_Array(std::vector<Material*> * mat_array);
 	bool No_Materials() { return MaterialArray.empty(); }
 	void ReCompileAllMaterial();
+	void BindMaterial(GLint index, Material* mat);
 	Material* getMaterialbyIndex(int i);
 
 protected:

@@ -17,11 +17,16 @@ protected:
 	QTimer* Timer;
 	char* importFileName = nullptr;
 
+	glm::vec2 clickPos;
+	bool MouseHolder = false;
+
 	
 
 public:
 	void keyPressEvent(QKeyEvent*);
 	void mouseMoveEvent(QMouseEvent* e);
+	void mousePressEvent(QMouseEvent* e);
+	void mouseReleaseEvent(QMouseEvent* e);
 	void tryImportFile(char* filename);
 
 private slots :

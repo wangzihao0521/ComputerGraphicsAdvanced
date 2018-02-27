@@ -21,6 +21,9 @@ public:
 	void Render(Object* cam_obj,Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void CompileAllMaterial();
 	void ComputeCurrentBoundBox();
+	void Unselect() { selected = false; }
+	void Select() { selected = true; }
+	bool IsSelected() { return selected; }
 	GLint getRenderQueue() const { return RenderQueue; }
 	void setRenderQueue(GLint queue);
 
@@ -48,6 +51,8 @@ protected:
 
 	glm::vec3 CurrentBoundBoxMin;
 	glm::vec3 CurrentBoundBoxMax;	
+
+	bool selected;
 
 	GLint RenderQueue;
 };

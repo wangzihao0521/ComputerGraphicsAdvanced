@@ -6,7 +6,6 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pass.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Camera.cpp">
       <Filter>Component\SubComponent</Filter>
     </ClCompile>
@@ -29,6 +28,16 @@
       <Filter>UserScript</Filter>
     </ClCompile>
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="Texture3D.cpp" />
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
@@ -38,7 +47,6 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pass.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Component\Component.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -76,25 +84,53 @@
     <ClInclude Include="ZihaoBehavior.h">
       <Filter>Component\SubComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Texture3D.h" />
+    <ClInclude Include="SkyBox.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DefaultFragmentShader.glsl">
-      <Filter>ShaderFile</Filter>
-    </None>
-    <None Include="DefaultVertexShader.glsl">
-      <Filter>ShaderFile</Filter>
-    </None>
-    <None Include="StaticFragmentShader.glsl">
-      <Filter>ShaderFile</Filter>
-    </None>
-    <None Include="StaticVertexShader.glsl">
-      <Filter>ShaderFile</Filter>
-    </None>
     <None Include="MirrorVertexShader.glsl">
       <Filter>ShaderFile\UserShaderFile</Filter>
     </None>
     <None Include="MirrorFragmentShader.glsl">
       <Filter>ShaderFile\UserShaderFile</Filter>
+    </None>
+    <None Include="DefaultFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="DefaultVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="SelectionFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="SelectionVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="SkyboxFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="SkyboxVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="StaticFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="StaticVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="OutlineVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="OutlineFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +151,9 @@
     </Filter>
     <Filter Include="ShaderFile\UserShaderFile">
       <UniqueIdentifier>{94741935-b9a4-40d4-b9dc-e2e7e59b96c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderFile\DefaultShaderFile">
+      <UniqueIdentifier>{8f671105-2c4b-432b-9a4c-0c17ee61c58f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

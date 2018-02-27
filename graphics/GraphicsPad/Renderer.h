@@ -11,6 +11,7 @@ protected:
 	
 	std::vector<Object*> ObjectArray;
 	std::vector<Object*> ObjectInSceneArray;
+	std::vector<Object*> CurrentObject;
 	std::vector<Camera*> CameraArray;
 	std::vector<Mesh*> MeshArray;
 	std::vector<Light*> LightArray;
@@ -18,7 +19,6 @@ protected:
 
 	static Object* CurrentCamera;
 	static Object* MainCamera;
-	static Object* CurrentObject;
 	GLint CurrentLight;
 
 	static Renderer* Zihao_renderer;
@@ -40,9 +40,14 @@ public:
 	void SwitchToNextLight();
 	static Object* getMainCamera() { return MainCamera; }
 	static Object* getCurrentCamera() { return CurrentCamera; }
-	static Object* getCurrentObject() { return CurrentObject; }
+	std::vector<Object*> getCurrentObject() { return CurrentObject; }
+	void ClearCurrentObject();
+	void AddCurrentObject(Object* obj);
 	Object* getCurrentLight()  const { return LightArray[CurrentLight]->getObject(); }
 	void SortObjAgain() { RenderQueueDirty = true; }
+	void SelectObjectByScreenPos(glm::vec2 pos);
+	void AddCurObjectByScreenPos(glm::vec2 pos);
+	void SelectObjectById(GLint id);
 
 	GLsizei ScreenWidth;
 	GLsizei ScreenHeight;
@@ -57,6 +62,7 @@ private:
 	GLuint bindvertexarray(GLuint vbufferID);
 	void QuickSortObjByQueue(int low, int high);
 	int Partition(int low, int high);
+	void RenderSelectionOutline();
 
 	bool RenderQueueDirty;
 };

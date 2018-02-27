@@ -2,6 +2,7 @@
 
 TextureManager* TextureManager::tex_mng = nullptr;
 Texture* TextureManager::WHITE = nullptr;
+Texture* TextureManager::BLACK = nullptr;
 
 TextureManager * TextureManager::getInstance()
 {
@@ -21,6 +22,7 @@ void TextureManager::init()
 	m[Texture::LINEAR_MIPMAP_LINEAR] = GL_LINEAR_MIPMAP_LINEAR;
 
 	TextureManager::WHITE = ImportTex("Default\\Texture\\white.png");
+	TextureManager::BLACK = ImportTex("Default\\Texture\\black.png");
 }
 
 Texture* TextureManager::ImportTex(std::string filename)
@@ -42,6 +44,29 @@ Texture* TextureManager::ImportTex(std::string filename)
 
 	Texture* Tex_obj = new Texture(filename, texture, TextureID);
 	TexArray.push_back(Tex_obj);
+	return Tex_obj;
+}
+
+Texture3D * TextureManager::ImportTex3D(std::string rightImage, std::string leftImage, std::string topImage, std::string bottomImage, std::string frontImage, std::string backImage)
+{
+	std::string TexFile[6] = { rightImage, leftImage, topImage, bottomImage, frontImage, backImage };
+
+	GLuint TextureID;
+	glGenTextures(1, &TextureID);
+	Texture3D* Tex_obj = new Texture3D(TextureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
+	for (int i = 0; i < 6; ++i) {
+//		QImage Texdata = QGLWidget::convertToGLFormat(QImage(TexFile[i].c_str(), "PNG"));
+		Texture * Texdata = ImportTex(TexFile[i]);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, Texdata->getImage()->width(), Texdata->getImage()->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, Texdata->getImage()->bits());
+		Tex_obj->BindTexbyIndex(i, Texdata);
+	}
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	
+
+	Tex3DArray.push_back(Tex_obj);
 	return Tex_obj;
 }
 

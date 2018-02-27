@@ -129,9 +129,12 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 			break;
 		case Qt::Key::Key_T:
 		{
-			Object* Cur_obj = renderer()->getCurrentObject();
-			Cur_obj->ComputeCurrentBoundBox();
-			renderer()->getMainCamera()->getComponent<Camera>()->CenterOnBoundingBox(Cur_obj->getCurrentBoundBoxMin(), Cur_obj->getCurrentBoundBoxMax());
+			std::vector<Object*> Cur_obj = renderer()->getCurrentObject();
+			for (auto iter = Cur_obj.begin(); iter != Cur_obj.end(); ++iter)
+			{
+				(*iter)->ComputeCurrentBoundBox();
+				renderer()->getMainCamera()->getComponent<Camera>()->CenterOnBoundingBox((*iter)->getCurrentBoundBoxMin(), (*iter)->getCurrentBoundBoxMax());
+			}
 			break;
 		}
 		default:
@@ -162,6 +165,35 @@ void MeGlWindow::mouseMoveEvent(QMouseEvent* e)
 			renderer()->getMainCamera()->getComponent<Camera>()->mouse_TranslateUpdate(glm::vec2(e->x(), e->y()));
 			repaint();
 		}
+	}
+}
+
+void MeGlWindow::mousePressEvent(QMouseEvent * e)
+{
+	if (!MouseHolder)
+	{
+		clickPos = glm::vec2(e->x(), e->y());
+		MouseHolder = true;
+	}
+}
+
+void MeGlWindow::mouseReleaseEvent(QMouseEvent * e)
+{
+	if (e->button() == Qt::LeftButton)
+	{
+		glm::vec2 mouseDelta = glm::vec2(e->x(), e->y()) - clickPos;
+		if (glm::length(mouseDelta) < 20.0f)
+		{
+			if (e->modifiers() && Qt::ControlModifier)
+				Renderer::getInstance()->AddCurObjectByScreenPos(clickPos);
+			else
+			{
+				Renderer::getInstance()->SelectObjectByScreenPos(clickPos);
+			}			
+		}
+		MouseHolder = false;
+		clickPos = glm::vec2(0, 0);
+		return;
 	}
 }
 

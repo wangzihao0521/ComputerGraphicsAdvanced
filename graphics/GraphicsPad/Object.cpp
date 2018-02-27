@@ -5,7 +5,7 @@ const float Object::Movement_speed = 0.1f;
 const float Object::Rotation_speed = 0.5f;
 
 Object::Object(std::string objName) :
-	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000)
+	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000), selected(false)
 {
 	AddComponent<Transform>();
 }
@@ -58,4 +58,5 @@ void Object::setRenderQueue(GLint queue)
 	RenderQueue = queue; 
 	Renderer::getInstance()->SortObjAgain();
 }
+
 

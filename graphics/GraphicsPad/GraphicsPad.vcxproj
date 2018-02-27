@@ -159,8 +159,11 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SelectionManager.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="StaticRenderer.cpp" />
+    <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +183,12 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SelectionManager.h" />
     <ClInclude Include="ShaderCompiler.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="StaticRenderer.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Texture3D.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex_data.h" />
@@ -193,6 +199,12 @@
     <None Include="DefaultVertexShader.glsl" />
     <None Include="MirrorFragmentShader.glsl" />
     <None Include="MirrorVertexShader.glsl" />
+    <None Include="OutlineFragmentShader.glsl" />
+    <None Include="OutlineVertexShader.glsl" />
+    <None Include="SelectionFragmentShader.glsl" />
+    <None Include="SelectionVertexShader.glsl" />
+    <None Include="SkyboxFragmentShader.glsl" />
+    <None Include="SkyboxVertexShader.glsl" />
     <None Include="StaticFragmentShader.glsl" />
     <None Include="StaticVertexShader.glsl" />
   </ItemGroup>

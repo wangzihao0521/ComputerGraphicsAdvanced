@@ -1,12 +1,13 @@
 #include "Renderer.h"
 #include "Mirror.h"
+#include "SkyBox.h"
+#include "SelectionManager.h"
 
 Renderer* Renderer::Zihao_renderer = nullptr;
 Mesh* Light::D_Light_Mesh = nullptr;
 Mesh* Light::P_Light_Mesh = nullptr;
 Object* Renderer::CurrentCamera = nullptr;
 Object* Renderer::MainCamera = nullptr;
-Object* Renderer::CurrentObject = nullptr;
 glm::vec3 Renderer::AmbientColor = glm::vec3(0.3, 0.3, 0.3);
 
 void Renderer::init(GLsizei width, GLsizei height,char* filename)
@@ -22,7 +23,8 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 
 	TextureManager::getInstance()->init();
 	StaticRenderer::getInstance()->init();
-
+	SkyBox::getInstance()->init();
+	SelectionManager::getInstance()->init();
 	CreateCameraInScene("MainCamera");
 	MainCamera = CurrentCamera;
 	Transform* CurCam_Trans = CurrentCamera->getComponent<Transform>();
@@ -45,26 +47,33 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	if (!mirror)
 		return;
 	PutMeshInScene(mirror);
-	Transform* CurObj_Trans = CurrentObject->getComponent<Transform>();
+	Transform* CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
 	CurObj_Trans->setScale(glm::vec3(2.8, 5, 1));
-	CurObj_Trans->setPosition(glm::vec3(0, 5, -10));
+	CurObj_Trans->setPosition(glm::vec3(0, 0, 0));
+	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
 //	CurObj_Trans->setRotation(glm::vec3(0, 180, 0));
-	CurrentObject->setRenderQueue(3000);
-	CurrentObject->AddCustomComponent<Mirror>();
-	CurrentObject->getCustomComponent<Mirror>()->Start();
+	CurrentObject[0]->setRenderQueue(3000);
+	CurrentObject[0]->AddCustomComponent<Mirror>();
+	CurrentObject[0]->getCustomComponent<Mirror>()->Start();
+	Material* M_mirror = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
 
 	Mesh *teapot = ImportObj("Assets\\teapot.obj");
 	if (!teapot)
 		return;
 	PutMeshInScene(teapot);
-	CurObj_Trans = CurrentObject->getComponent<Transform>();
+	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
 	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurObj_Trans->setPosition(glm::vec3(-17, -15, -3));
+	CurObj_Trans->setPosition(glm::vec3(0, 0, 0));
 	CurObj_Trans->setScale(glm::vec3(0.65, 0.65, 0.65));
+	Material* teapotRFL = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, teapotRFL);
 	//	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
 	//	CurrentObject->AddComponent<Light>();
 	//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
 	//	PushLightsInArray(CurrentObject->getComponent<Light>());
+
+	ClearCurrentObject();
 }
 
 Renderer * Renderer::getInstance()
@@ -87,6 +96,7 @@ void Renderer::RenderToScene()
 		QuickSortObjByQueue(0, ObjectArray.size()-1);
 		RenderQueueDirty = false;
 	}
+	SkyBox::getInstance()->Render(MainCamera,ScreenWidth,ScreenHeight);
 	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
 	{
 		for (auto behavior_iter = (*iter)->CustomComponent_Map.begin(); behavior_iter != (*iter)->CustomComponent_Map.end(); ++behavior_iter)
@@ -95,14 +105,14 @@ void Renderer::RenderToScene()
 		}
 		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
 		{
-			(*iter)->Render(CurrentCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+			(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
 		}
 		glDisable(GL_BLEND);
 		ObjectInSceneArray.push_back(*iter);
 	}
-
+	RenderSelectionOutline();
 	ObjectInSceneArray.clear();
 	
 }
@@ -112,11 +122,6 @@ void Renderer::RenderToTexture(Object * Cam, FrameBuffer * FBO)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO->id);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FBO->ColorTexture->getTextureID(), 0);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, FBO->DepthTexture->getTextureID(), 0);
-	GLuint status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-	assert(status == GL_FRAMEBUFFER_COMPLETE);
 
 	for (auto iter = ObjectInSceneArray.begin(); iter != ObjectInSceneArray.end(); iter++)
 	{
@@ -209,7 +214,8 @@ void Renderer::PutMeshInScene(Mesh* mesh)
 	mr->Fill_MT_Array(&MaterialArray);
 
 	ObjectArray.push_back(obj);
-	CurrentObject = obj;
+	CurrentObject.clear();
+	CurrentObject.push_back(obj);
 	RenderQueueDirty = true;
 }
 
@@ -237,6 +243,77 @@ void Renderer::SwitchToNextLight()
 	else
 		CurrentLight++;
 }
+
+void Renderer::ClearCurrentObject()
+{
+	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
+	{
+		(*iter)->Unselect();
+	}
+	CurrentObject.clear();
+}
+
+void Renderer::AddCurrentObject(Object * obj)
+{
+	CurrentObject.push_back(obj);
+	obj->Select();
+}
+
+void Renderer::SelectObjectByScreenPos(glm::vec2 pos)
+{
+	glm::vec2 ClipPos = glm::vec2(pos.x / ScreenWidth * 2 - 1, (1 - pos.y / ScreenHeight) * 2 - 1);
+	SelectionManager::getInstance()->UpdateSelectionMatrix(ScreenWidth, ScreenHeight, ClipPos);
+	glUseProgram(SelectionManager::getInstance()->getSelectionPass()->getProgramID());
+	glBindFramebuffer(GL_FRAMEBUFFER, SelectionManager::getInstance()->getFBO()->id);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	GLint	i = 1;
+	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
+	{	
+		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, i);
+		++i;
+	}
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	GLint data = -1;
+	glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &data);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	if (data <= 0)
+	{
+		ClearCurrentObject();
+		return;
+	}
+	SelectObjectById(data);
+}
+
+void Renderer::AddCurObjectByScreenPos(glm::vec2 pos)
+{
+	glm::vec2 ClipPos = glm::vec2(pos.x / ScreenWidth * 2 - 1, (1 - pos.y / ScreenHeight) * 2 - 1);
+	SelectionManager::getInstance()->UpdateSelectionMatrix(ScreenWidth, ScreenHeight, ClipPos);
+	glUseProgram(SelectionManager::getInstance()->getSelectionPass()->getProgramID());
+	glBindFramebuffer(GL_FRAMEBUFFER, SelectionManager::getInstance()->getFBO()->id);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	GLint	i = 1;
+	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
+	{
+		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, i);
+		++i;
+	}
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	GLint ObjectID = -1;
+	glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &ObjectID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	if (ObjectID <= 0)
+		return;
+	AddCurrentObject(ObjectArray[ObjectID - 1]);
+}
+
+void Renderer::SelectObjectById(GLint id)
+{
+	ClearCurrentObject();
+	AddCurrentObject(ObjectArray[id - 1]);
+}
+
 
 void Renderer::PushCameraInArray(Camera* cam)
 {
@@ -316,4 +393,20 @@ int Renderer::Partition(int low, int high)
 	ObjectArray[i + 1] = x;
 
 	return i + 1;
+}
+
+void Renderer::RenderSelectionOutline()
+{
+	if (CurrentObject.empty())
+		return;
+//	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	glBlendFunc(GL_ONE, GL_ONE);
+	glUseProgram(SelectionManager::getInstance()->getOutlinePass()->getProgramID());
+	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
+	{
+		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, 0);
+	}
+	glDisable(GL_BLEND);
 }

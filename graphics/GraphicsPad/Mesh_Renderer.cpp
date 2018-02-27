@@ -16,7 +16,7 @@ void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)
 	Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
 	if (!mesh || !mesh->getGeometry()->NM())
 	{
-		Material* DefaultMaterial = new Material("DefaultMaterial", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+		Material* DefaultMaterial = new Material("DefaultMaterial", "DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
 		DefaultMaterial->BindMesh(mesh);
 		DefaultMaterial->set_Facecount(mesh->getGeometry()->NF());
 		MaterialArray.push_back(DefaultMaterial);
@@ -45,6 +45,21 @@ void Mesh_Renderer::ReCompileAllMaterial()
 	{
 		(*iter)->ReCompileShaders();
 	}
+}
+
+void Mesh_Renderer::BindMaterial(GLint index, Material * mat)
+{
+	Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
+	mat->BindMesh(mesh);
+	mat->set_Facecount(mesh->getGeometry()->NF());
+	if (MaterialArray[index])
+	{
+		Material* oldmat = MaterialArray[index];
+		MaterialArray[index] = mat;
+		delete oldmat;
+		return;
+	}
+	MaterialArray.push_back(mat);
 }
 
 Material * Mesh_Renderer::getMaterialbyIndex(int i)

@@ -28,6 +28,8 @@ protected:
 	Texture*  map_bump;	//!< Bump texture map
 	Texture*  map_disp;	//!< Displacement texture map
 
+	Texture* newmap;	//just for implement the mirror conveniently for now. I will add customized properties to material later.
+
 	Mesh* mesh;
 
 	int first_face;
@@ -46,9 +48,11 @@ public:
 	void set_Facecount(int i) { face_count = i; }
 	void BindMesh(Mesh* msh) { mesh = msh; }
 	Mesh* getMesh() const { return mesh; }
-	void Bind_map_Kd_FBOTexUnit();
+	
+//	Texture* get_map_Kd() const { return map_Kd; }
 
 	glm::mat4 MirrorCamMatrix;   //just for implement the mirror conveniently for now. I will add customized properties to material later.
+	void Bind_newmap_FBOTexUnit();
 
 	static glm::vec3 AmbientColor;
 
@@ -57,5 +61,6 @@ private:
 	void Add_Light_Uniform(Pass* pass,Light* light);
 	void Add_Default_Parameter(Pass* pass);
 	void BindTex_Shader(GLint UniformLocation, int& Tex_Unit_number,Texture* map);
+	void FeedShader_tex(GLint UniformLocation, int& Tex_Unit_number, Texture* map, Texture* DefaultTex);
 };
 

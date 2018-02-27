@@ -24,7 +24,7 @@ void StaticRenderer::Render(Mesh* mesh,Transform * transform, Object * cam, GLsi
 
 	glm::mat4 projectionMatrix = glm::mat4();
 	if (Camera_Component->getPJ_Mode() == Perspective)
-		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 1000.0f);
+		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 500.0f);
 	else if (Camera_Component->getPJ_Mode() == Orthogonal)
 	{
 		float distance = glm::distance(transform->getPosition(), cam->getComponent<Transform>()->getPosition());
@@ -45,3 +45,5 @@ void StaticRenderer::Render(Mesh* mesh,Transform * transform, Object * cam, GLsi
 	unsigned int NumIndices = mesh->getGeometry()->NF() * 3;
 	glDrawArrays(GL_TRIANGLES, 0,NumIndices);
 }
+
+

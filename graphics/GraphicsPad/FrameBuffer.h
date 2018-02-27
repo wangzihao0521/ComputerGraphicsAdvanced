@@ -5,7 +5,8 @@
 class FrameBuffer {
 protected:
 	void init_ColorTexture(GLsizei width, GLsizei height);
-	void init_DepthTexture(GLsizei width, GLsizei height);	
+	void init_DepthTexture(GLsizei width, GLsizei height);
+	void init_SelectionColorTexture();
 
 public:
 	GLuint id;
@@ -17,5 +18,5 @@ public:
 		id(0), ColorTexture(nullptr), DepthTexture(nullptr) {}
 
 	void init(GLsizei width, GLsizei height);
-
+	void SelectionInit();
 };

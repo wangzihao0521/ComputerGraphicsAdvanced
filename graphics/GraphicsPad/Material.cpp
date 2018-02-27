@@ -5,7 +5,7 @@
 glm::vec3 Material::AmbientColor = glm::vec3();
 
 Material::Material(std::string Materialname, char * Vshaderfilename, char * Fshaderfilename):
-	name(Materialname), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), first_face(0), face_count(0)
+	name(Materialname), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), newmap(nullptr),first_face(0), face_count(0)
 {
 	Ka[0] = Ka[1] = Ka[2] = 0.3;
 	Kd[0] = Kd[1] = Kd[2] = 1;
@@ -30,7 +30,7 @@ Material::Material(std::string Materialname, char * Vshaderfilename, char * Fsha
 }
 
 Material::Material(Mesh* M,cyTriMesh::Mtl & mat, char* path_name, int firstface, int facecount):
-	name(mat.name),PathName(path_name), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr)
+	name(mat.name),PathName(path_name), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr),newmap(nullptr)
 {
 	for (int i = 0; i < 3; ++i)
 	{
@@ -98,12 +98,12 @@ void Material::ReCompileShaders()
 	}
 }
 
-void Material::Bind_map_Kd_FBOTexUnit()
+void Material::Bind_newmap_FBOTexUnit()
 {
 	GLint i = FrameBuffer::count - 1;
-	if (!map_Kd)
-		map_Kd = TextureManager::getInstance()->CreateEmptyTexture();
-	map_Kd->setTexUnitId(31 - i * 2);
+	if (!newmap)
+		newmap = TextureManager::getInstance()->CreateEmptyTexture();
+	newmap->setTexUnitId(30 - i * 2);
 }
 
 void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsizei screenwidth, GLsizei screenheight)
@@ -118,7 +118,7 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 	
 	glm::mat4 projectionMatrix = glm::mat4();
 	if (Camera_Component->getPJ_Mode() == Perspective)
-		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 1000.0f);
+		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 500.0f);
 	else if (Camera_Component->getPJ_Mode() == Orthogonal)
 	{
 		float distance = glm::distance(transform->getPosition(), cam->getComponent<Transform>()->getPosition());
@@ -187,44 +187,30 @@ void Material::Add_Default_Parameter(Pass* pass)
 	if (UniformLocation >= 0)
 		glUniform1d(UniformLocation, illum);
 
+	UniformLocation = glGetUniformLocation(pass->getProgramID(), "SkyBoxCubeMap");
+	if (UniformLocation >= 0)
+	{
+		glUniform1i(UniformLocation, 31);
+	}
 	UniformLocation = glGetUniformLocation(pass->getProgramID(), "DeFt_Mtl_map_Ka");
 	if (UniformLocation >= 0)
 	{
-		if (map_Ka)
-		{
-			BindTex_Shader(UniformLocation, Tex_Unit_number,map_Ka);
-		}
-		else
-		{
-			BindTex_Shader(UniformLocation, Tex_Unit_number, TextureManager::WHITE);
-		}
+		FeedShader_tex(UniformLocation, Tex_Unit_number, map_Ka, TextureManager::WHITE);
 	}
 	UniformLocation = glGetUniformLocation(pass->getProgramID(), "DeFt_Mtl_map_Kd");
 	if (UniformLocation >= 0)
 	{
-		if (map_Kd)
-		{
-			if (map_Kd->getTexUnitID() < 0)
-				BindTex_Shader(UniformLocation, Tex_Unit_number, map_Kd);
-			else 
-				glUniform1i(UniformLocation, map_Kd->getTexUnitID());
-		}
-		else
-		{
-			BindTex_Shader(UniformLocation, Tex_Unit_number, TextureManager::WHITE);
-		}
+		FeedShader_tex(UniformLocation, Tex_Unit_number, map_Kd, TextureManager::WHITE);
 	}	
 	UniformLocation = glGetUniformLocation(pass->getProgramID(), "DeFt_Mtl_map_Ks");
 	if (UniformLocation >= 0)
 	{
-		if (map_Ks)
-		{
-			BindTex_Shader(UniformLocation, Tex_Unit_number, map_Ks);
-		}
-		else
-		{
-			BindTex_Shader(UniformLocation, Tex_Unit_number, TextureManager::WHITE);
-		}
+		FeedShader_tex(UniformLocation, Tex_Unit_number, map_Ks, TextureManager::WHITE);
+	}
+	UniformLocation = glGetUniformLocation(pass->getProgramID(), "newmap");
+	if (UniformLocation >= 0)
+	{
+		FeedShader_tex(UniformLocation, Tex_Unit_number, newmap, TextureManager::BLACK);
 	}
 	
 }
@@ -240,5 +226,21 @@ void Material::BindTex_Shader(GLint UniformLocation,int& Tex_Unit_number, Textur
 	}
 	glUniform1i(UniformLocation, Tex_Unit_number);
 	++Tex_Unit_number;
+}
+
+void Material::FeedShader_tex(GLint UniformLocation, int & Tex_Unit_number, Texture * map, Texture* DefaultTex)
+{
+	if (map)
+	{
+		if (map->getTexUnitID() < 0)
+			BindTex_Shader(UniformLocation, Tex_Unit_number, map);
+		else
+			glUniform1i(UniformLocation, map->getTexUnitID());
+	}
+	else
+	{
+		BindTex_Shader(UniformLocation, Tex_Unit_number, DefaultTex);
+	}
+	
 }
 

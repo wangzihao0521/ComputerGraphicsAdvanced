@@ -7,6 +7,7 @@ void MeGlWindow::initializeGL()
 	resize(960, 720);
 	renderer()->init(width(),height(),importFileName);
 
+	PrefetchObject = nullptr;
 }
 
 void MeGlWindow::paintGL()
@@ -145,25 +146,32 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 
 void MeGlWindow::mouseMoveEvent(QMouseEvent* e)
 {
-	if (e->modifiers() && Qt::ControlModifier)
+	if (StartTransform)
 	{
-		if (e->buttons() == Qt::LeftButton)
-		{
-			renderer()->getCurrentLight()->getComponent<Light>()->mouse_RotateUpdate(glm::vec2(e->x(), e->y()));
-			repaint();
-		}
+
 	}
 	else
 	{
-		if (e->buttons() == Qt::LeftButton)
+		if (e->modifiers() && Qt::ControlModifier)
 		{
-			renderer()->getMainCamera()->getComponent<Camera>()->mouse_RotateUpdate(glm::vec2(e->x(), e->y()));
-			repaint();
+			if (e->buttons() == Qt::LeftButton)
+			{
+				renderer()->getCurrentLight()->getComponent<Light>()->mouse_RotateUpdate(glm::vec2(e->x(), e->y()));
+				repaint();
+			}
 		}
-		else if (e->buttons() == Qt::RightButton)
+		else
 		{
-			renderer()->getMainCamera()->getComponent<Camera>()->mouse_TranslateUpdate(glm::vec2(e->x(), e->y()));
-			repaint();
+			if (e->buttons() == Qt::LeftButton)
+			{
+				renderer()->getMainCamera()->getComponent<Camera>()->mouse_RotateUpdate(glm::vec2(e->x(), e->y()));
+				repaint();
+			}
+			else if (e->buttons() == Qt::RightButton)
+			{
+				renderer()->getMainCamera()->getComponent<Camera>()->mouse_TranslateUpdate(glm::vec2(e->x(), e->y()));
+				repaint();
+			}
 		}
 	}
 }
@@ -172,7 +180,15 @@ void MeGlWindow::mousePressEvent(QMouseEvent * e)
 {
 	if (!MouseHolder)
 	{
-		clickPos = glm::vec2(e->x(), e->y());
+		if (e->button() == Qt::LeftButton)
+		{
+			clickPos = glm::vec2(e->x(), e->y());
+			PrefetchObject = Renderer::getInstance()->getObjectByScreenPos(clickPos);
+			if (PrefetchObject && PrefetchObject->IsTransformationObject())
+			{
+				StartTransform = true;
+			}
+		}
 		MouseHolder = true;
 	}
 }
@@ -181,20 +197,24 @@ void MeGlWindow::mouseReleaseEvent(QMouseEvent * e)
 {
 	if (e->button() == Qt::LeftButton)
 	{
-		glm::vec2 mouseDelta = glm::vec2(e->x(), e->y()) - clickPos;
-		if (glm::length(mouseDelta) < 20.0f)
+		if (PrefetchObject && PrefetchObject->IsNormalObject())
 		{
-			if (e->modifiers() && Qt::ControlModifier)
-				Renderer::getInstance()->AddCurObjectByScreenPos(clickPos);
-			else
+			glm::vec2 mouseDelta = glm::vec2(e->x(), e->y()) - clickPos;
+			if (glm::length(mouseDelta) < 20.0f)
 			{
-				Renderer::getInstance()->SelectObjectByScreenPos(clickPos);
-			}			
+				if (e->modifiers() && Qt::ControlModifier)
+					Renderer::getInstance()->AddCurrentObject(PrefetchObject);
+				else
+				{
+					Renderer::getInstance()->ClearCurrentObject();
+					Renderer::getInstance()->AddCurrentObject(PrefetchObject);
+				}
+			}
 		}
-		MouseHolder = false;
 		clickPos = glm::vec2(0, 0);
-		return;
 	}
+	MouseHolder = false;
+	StartTransform = false;
 }
 
 void MeGlWindow::tryImportFile(char * filename)

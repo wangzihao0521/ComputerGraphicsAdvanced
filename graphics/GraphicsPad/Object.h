@@ -13,6 +13,12 @@ class ZihaoBehavior;
 
 class Object {
 public:
+	enum OBJ_TYPE
+	{
+		NORMAL = 0,
+		TRANSFORMATION
+	};
+
 	Object(std::string objName = "object");
 
 	glm::vec3 getCurrentBoundBoxMin() const { return CurrentBoundBoxMin; }
@@ -24,6 +30,11 @@ public:
 	void Unselect() { selected = false; }
 	void Select() { selected = true; }
 	bool IsSelected() { return selected; }
+	void UnHide() { hided = false; }
+	void Hide() { hided = true; }
+	bool IsHided() { return hided; }
+	bool IsTransformationObject();
+	bool IsNormalObject();
 	GLint getRenderQueue() const { return RenderQueue; }
 	void setRenderQueue(GLint queue);
 
@@ -52,7 +63,9 @@ protected:
 	glm::vec3 CurrentBoundBoxMin;
 	glm::vec3 CurrentBoundBoxMax;	
 
+	bool hided;
 	bool selected;
+	OBJ_TYPE Obj_type;
 
 	GLint RenderQueue;
 };

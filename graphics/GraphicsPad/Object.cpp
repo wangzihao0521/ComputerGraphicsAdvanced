@@ -5,7 +5,7 @@ const float Object::Movement_speed = 0.1f;
 const float Object::Rotation_speed = 0.5f;
 
 Object::Object(std::string objName) :
-	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000), selected(false)
+	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000), selected(false),hided(false),Obj_type(NORMAL)
 {
 	AddComponent<Transform>();
 }
@@ -51,6 +51,20 @@ void Object::ComputeCurrentBoundBox()
 	cyPoint3f max = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->GetBoundMax();
 	CurrentBoundBoxMin = glm::vec3(Zihao_M2W * glm::vec4(min.x, min.y, min.z, 1) );
 	CurrentBoundBoxMax = glm::vec3(Zihao_M2W * glm::vec4(max.x, max.y, max.z, 1) );
+}
+
+bool Object::IsTransformationObject()
+{
+	if (Obj_type == TRANSFORMATION)
+		return true;
+	return false;
+}
+
+bool Object::IsNormalObject()
+{
+	if (Obj_type == NORMAL)
+		return true;
+	return false;
 }
 
 void Object::setRenderQueue(GLint queue)

@@ -16,7 +16,7 @@ void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)
 	Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
 	if (!mesh || !mesh->getGeometry()->NM())
 	{
-		Material* DefaultMaterial = new Material("DefaultMaterial", "DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
+		Material* DefaultMaterial = new Material("DefaultMaterial", "Default\\ShaderFile\\DefaultVertexShader.glsl", "Default\\ShaderFile\\DefaultFragmentShader.glsl");
 		DefaultMaterial->BindMesh(mesh);
 		DefaultMaterial->set_Facecount(mesh->getGeometry()->NF());
 		MaterialArray.push_back(DefaultMaterial);

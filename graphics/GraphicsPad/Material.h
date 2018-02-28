@@ -40,7 +40,7 @@ protected:
 
 	
 public:
-	Material(std::string Materialname = "Material", char* Vshaderfilename = "DefaultVertexShader.glsl", char* Fshaderfilename = "DefaultFragmentShader.glsl");
+	Material(std::string Materialname = "Material", char* Vshaderfilename = "Default\\ShaderFile\\DefaultVertexShader.glsl", char* Fshaderfilename = "Default\\ShaderFile\\DefaultFragmentShader.glsl");
 	Material(Mesh * M,cyTriMesh::Mtl & mat,char* path_name, int firstface, int facecount);
 	void ExecuteEveryPass(Transform* transform, Object* cam,Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void ReCompileShaders();

@@ -69,7 +69,7 @@ Material::Material(Mesh* M,cyTriMesh::Mtl & mat, char* path_name, int firstface,
 	first_face = firstface;
 	face_count = facecount;
 
-	Pass * p = ShaderCompiler::getInstance()->Compile("DefaultVertexShader.glsl", "DefaultFragmentShader.glsl");
+	Pass * p = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\DefaultVertexShader.glsl", "Default\\ShaderFile\\DefaultFragmentShader.glsl");
 	PassArray.push_back(p);
 }
 

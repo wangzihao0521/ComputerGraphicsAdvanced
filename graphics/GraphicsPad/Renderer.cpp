@@ -99,6 +99,8 @@ void Renderer::RenderToScene()
 	SkyBox::getInstance()->Render(MainCamera,ScreenWidth,ScreenHeight);
 	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
 	{
+		if ((*iter)->IsHided())
+			continue;
 		for (auto behavior_iter = (*iter)->CustomComponent_Map.begin(); behavior_iter != (*iter)->CustomComponent_Map.end(); ++behavior_iter)
 		{
 			behavior_iter->second->onWillRenderObject();
@@ -125,6 +127,8 @@ void Renderer::RenderToTexture(Object * Cam, FrameBuffer * FBO)
 
 	for (auto iter = ObjectInSceneArray.begin(); iter != ObjectInSceneArray.end(); iter++)
 	{
+		if ((*iter)->IsHided())
+			continue;
 		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
 		{
 			(*iter)->Render(Cam, (*Light_iter), ScreenWidth, ScreenHeight);
@@ -255,6 +259,8 @@ void Renderer::ClearCurrentObject()
 
 void Renderer::AddCurrentObject(Object * obj)
 {
+	if (!obj)
+		return;
 	CurrentObject.push_back(obj);
 	obj->Select();
 }
@@ -306,6 +312,29 @@ void Renderer::AddCurObjectByScreenPos(glm::vec2 pos)
 	if (ObjectID <= 0)
 		return;
 	AddCurrentObject(ObjectArray[ObjectID - 1]);
+}
+
+Object * Renderer::getObjectByScreenPos(glm::vec2 pos)
+{
+	glm::vec2 ClipPos = glm::vec2(pos.x / ScreenWidth * 2 - 1, (1 - pos.y / ScreenHeight) * 2 - 1);
+	SelectionManager::getInstance()->UpdateSelectionMatrix(ScreenWidth, ScreenHeight, ClipPos);
+	glUseProgram(SelectionManager::getInstance()->getSelectionPass()->getProgramID());
+	glBindFramebuffer(GL_FRAMEBUFFER, SelectionManager::getInstance()->getFBO()->id);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	GLint	i = 1;
+	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
+	{
+		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, i);
+		++i;
+	}
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	GLint ObjectID = -1;
+	glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &ObjectID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	if (ObjectID <= 0)
+		return nullptr;
+	return ObjectArray[ObjectID - 1];
 }
 
 void Renderer::SelectObjectById(GLint id)
@@ -406,6 +435,8 @@ void Renderer::RenderSelectionOutline()
 	glUseProgram(SelectionManager::getInstance()->getOutlinePass()->getProgramID());
 	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
 	{
+		if ((*iter)->IsHided())
+			continue;
 		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, 0);
 	}
 	glDisable(GL_BLEND);

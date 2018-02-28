@@ -5,7 +5,7 @@ StaticRenderer* StaticRenderer::Static_Renderer = nullptr;
 
 void StaticRenderer::init()
 {
-	pass = ShaderCompiler::getInstance()->Compile("StaticVertexShader.glsl", "StaticFragmentShader.glsl");
+	pass = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\StaticVertexShader.glsl", "Default\\ShaderFile\\StaticFragmentShader.glsl");
 }
 
 void StaticRenderer::Render(Mesh* mesh,Transform * transform, Object * cam, GLsizei screenwidth, GLsizei screenheight)

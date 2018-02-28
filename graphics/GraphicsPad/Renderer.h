@@ -47,6 +47,7 @@ public:
 	void SortObjAgain() { RenderQueueDirty = true; }
 	void SelectObjectByScreenPos(glm::vec2 pos);
 	void AddCurObjectByScreenPos(glm::vec2 pos);
+	Object* getObjectByScreenPos(glm::vec2 pos);
 	void SelectObjectById(GLint id);
 
 	GLsizei ScreenWidth;

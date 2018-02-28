@@ -49,7 +49,7 @@ void SkyBox::init()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
 
-	pass = ShaderCompiler::getInstance()->Compile("SkyboxVertexShader.glsl", "SkyboxFragmentShader.glsl");
+	pass = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\SkyboxVertexShader.glsl", "Default\\ShaderFile\\SkyboxFragmentShader.glsl");
 
 	glActiveTexture(GL_TEXTURE31);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap->getTextureID());
@@ -71,7 +71,10 @@ void SkyBox::Render(Object * cam, GLsizei screenwidth, GLsizei screenheight)
 
 	glm::mat4 projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 500.0f);
 
-	glm::mat4 inverse_P = glm::inverse(projectionMatrix);
+	CameraMatrix[3][0] = 0;
+	CameraMatrix[3][1] = 0;
+	CameraMatrix[3][2] = 0;
+	glm::mat4 inverse_P = glm::inverse(projectionMatrix * CameraMatrix);
 
 	GLint uniformLocation = glGetUniformLocation(pass->getProgramID(), "inverse_P");
 	if (uniformLocation >= 0)

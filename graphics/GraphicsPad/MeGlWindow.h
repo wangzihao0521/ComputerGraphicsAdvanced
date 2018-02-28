@@ -19,6 +19,9 @@ protected:
 
 	glm::vec2 clickPos;
 	bool MouseHolder = false;
+	bool StartTransform = false;
+
+	Object* PrefetchObject;
 
 	
 

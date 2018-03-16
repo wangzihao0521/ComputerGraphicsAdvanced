@@ -1,5 +1,13 @@
 #include "Mesh_Renderer.h"
 #include "Object.h"
+#include "StaticRenderer.h"
+
+Pass* Mesh_Renderer::AmbientPass = nullptr;
+
+Mesh_Renderer::~Mesh_Renderer()
+{
+	MaterialArray.clear();
+}
 
 void Mesh_Renderer::Render(Object * cam_obj,class Light* light, GLsizei screenwidth, GLsizei screenheight)
 {
@@ -9,6 +17,7 @@ void Mesh_Renderer::Render(Object * cam_obj,class Light* light, GLsizei screenwi
 		glBindVertexArray(mesh->getVArrayID());
 		(*iter)->ExecuteEveryPass(object->getComponent<class Transform>(), cam_obj, light, screenwidth, screenheight);
 	}
+	
 }
 
 void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)
@@ -20,6 +29,7 @@ void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)
 		DefaultMaterial->BindMesh(mesh);
 		DefaultMaterial->set_Facecount(mesh->getGeometry()->NF());
 		MaterialArray.push_back(DefaultMaterial);
+		(*mat_array).push_back(DefaultMaterial);
 		return;
 	}
 	int i = 0;
@@ -66,5 +76,7 @@ Material * Mesh_Renderer::getMaterialbyIndex(int i)
 {
 	return MaterialArray[i];
 }
+
+
 
 

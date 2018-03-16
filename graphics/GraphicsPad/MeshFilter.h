@@ -11,6 +11,7 @@ public:
 	{
 		type = Component::Type::Mesh_Filter;
 	}
+	~Mesh_Filter() { mesh = nullptr; }
 
 	void BindMesh(Mesh* ms)
 	{

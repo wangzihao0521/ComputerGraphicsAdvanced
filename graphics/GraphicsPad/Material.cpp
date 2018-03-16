@@ -7,7 +7,7 @@ glm::vec3 Material::AmbientColor = glm::vec3();
 Material::Material(std::string Materialname, char * Vshaderfilename, char * Fshaderfilename):
 	name(Materialname), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), newmap(nullptr),first_face(0), face_count(0)
 {
-	Ka[0] = Ka[1] = Ka[2] = 0.3;
+	Ka[0] = Ka[1] = Ka[2] = 1;
 	Kd[0] = Kd[1] = Kd[2] = 1;
 	Ks[0] = Ks[1] = Ks[2] = 1;
 	Tf[0] = Tf[1] = Tf[2] = 0;
@@ -73,12 +73,33 @@ Material::Material(Mesh* M,cyTriMesh::Mtl & mat, char* path_name, int firstface,
 	PassArray.push_back(p);
 }
 
+Material::~Material()
+{
+	_ReleaseTex(map_Ka);
+	_ReleaseTex(map_Kd);
+	_ReleaseTex(map_Ks);
+	_ReleaseTex(map_bump);
+	_ReleaseTex(map_d);
+	_ReleaseTex(map_Ns);
+	_ReleaseTex(map_disp);
+	_ReleaseTex(newmap);
+	mesh = nullptr;
+	for (auto iter = PassArray.begin(); iter != PassArray.end(); ++iter)
+	{
+		if (*iter)
+		{
+			delete (*iter);
+		}
+	}
+	PassArray.clear();
+}
+
 void Material::ExecuteEveryPass(Transform* transform, Object* cam,Light* light, GLsizei screenwidth, GLsizei screenheight)
 {	
 	for (auto iter = PassArray.begin(); iter != PassArray.end(); iter++)
 	{
 		glUseProgram((*iter)->getProgramID());
-		Add_Zihao_MVP((*iter),transform,cam,screenwidth,screenheight);
+		Add_Zihao_MVP((*iter),transform,cam,screenwidth,screenheight,light);
 		Add_Default_Parameter(*iter);
 		Add_Light_Uniform(*iter,light);
 		glDrawArrays(GL_TRIANGLES,first_face * 3, face_count * 3);
@@ -98,15 +119,12 @@ void Material::ReCompileShaders()
 	}
 }
 
-void Material::Bind_newmap_FBOTexUnit()
+void Material::Bind_newmap_FBOTexUnit(Texture * tex)
 {
-	GLint i = FrameBuffer::count - 1;
-	if (!newmap)
-		newmap = TextureManager::getInstance()->CreateEmptyTexture();
-	newmap->setTexUnitId(30 - i * 2);
+	newmap = tex;
 }
 
-void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsizei screenwidth, GLsizei screenheight)
+void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsizei screenwidth, GLsizei screenheight, Light* light)
 {
 	if (!cam)
 		return;
@@ -116,14 +134,7 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 
 	glm::mat4 CameraMatrix = Camera_Component->getWorldToViewMatrix();
 	
-	glm::mat4 projectionMatrix = glm::mat4();
-	if (Camera_Component->getPJ_Mode() == Perspective)
-		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 500.0f);
-	else if (Camera_Component->getPJ_Mode() == Orthogonal)
-	{
-		float distance = glm::distance(transform->getPosition(), cam->getComponent<Transform>()->getPosition());
-		projectionMatrix = glm::ortho(-distance / 2, distance / 2, -distance / 2, distance / 2, 1.0f, 100.0f);
-	}
+	glm::mat4 projectionMatrix = Camera_Component->getProjectionMatrix();
 
 	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), transform->getPosition());
 	glm::mat4 RotationMatrix =  glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0)) *
@@ -131,7 +142,10 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 								glm::rotate(glm::mat4(), transform->getRotation().z, glm::vec3(0, 0, 1)) ;
 	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(), transform->getScale());
 	glm::mat4 Zihao_M2W = TransformMatrix * RotationMatrix * ScaleMatrix;
-	glm::mat4 Zihao_MVP = projectionMatrix * CameraMatrix * Zihao_M2W;
+	glm::mat4 CamFixTransformMatrix = glm::mat4();
+	if (light)
+		CamFixTransformMatrix = light->getShadowInfo()->Cast_Shadow ? glm::mat4() : glm::translate(glm::mat4(), glm::vec3(0, 0, -0.0001));
+	glm::mat4 Zihao_MVP = CamFixTransformMatrix * projectionMatrix * CameraMatrix * Zihao_M2W;
 
 	GLint M2WuniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_M2W");
 	if (M2WuniformLocation >= 0)
@@ -154,12 +168,36 @@ void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsiz
 
 void Material::Add_Light_Uniform(Pass * pass, Light* light)
 {
-	GLint LightPosuniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_LightPosition_WS");
-	if (LightPosuniformLocation >= 0)
-		glUniform4fv(LightPosuniformLocation, 1, &light->getLightDirection()[0]);
-	GLint AmbientColoruniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_AmbientColor");
-	if (AmbientColoruniformLocation >= 0)
-		glUniform3fv(AmbientColoruniformLocation, 1, &AmbientColor[0]);
+	if (light)
+	{
+		GLint uniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_LightPosition_WS");
+		if (uniformLocation >= 0)
+			glUniform4fv(uniformLocation, 1, &light->getLightDirection()[0]);
+		uniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_AmbientColor");
+		if (uniformLocation >= 0)
+			glUniform3fv(uniformLocation, 1, &AmbientColor[0]);
+		uniformLocation = glGetUniformLocation(pass->getProgramID(), "LightIntensity");
+		if (uniformLocation >= 0)
+			glUniform1f(uniformLocation, light->getIntensity());
+		uniformLocation = glGetUniformLocation(pass->getProgramID(), "LightRadius");
+		if (uniformLocation >= 0)
+			glUniform1f(uniformLocation, light->getRadius());
+	}
+	else
+	{
+		GLint uniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_LightPosition_WS");
+		if (uniformLocation >= 0)
+			glUniform4fv(uniformLocation, 1, &glm::vec3()[0]);
+		uniformLocation = glGetUniformLocation(pass->getProgramID(), "Zihao_AmbientColor");
+		if (uniformLocation >= 0)
+			glUniform3fv(uniformLocation, 1, &glm::vec3()[0]);
+		uniformLocation = glGetUniformLocation(pass->getProgramID(), "LightIntensity");
+		if (uniformLocation >= 0)
+			glUniform1f(uniformLocation,0);
+		uniformLocation = glGetUniformLocation(pass->getProgramID(), "LightRadius");
+		if (uniformLocation >= 0)
+			glUniform1f(uniformLocation, 1);
+	}
 }
 
 void Material::Add_Default_Parameter(Pass* pass)
@@ -242,5 +280,14 @@ void Material::FeedShader_tex(GLint UniformLocation, int & Tex_Unit_number, Text
 		BindTex_Shader(UniformLocation, Tex_Unit_number, DefaultTex);
 	}
 	
+}
+
+void Material::_ReleaseTex(Texture*  & tex)
+{
+	if (tex)
+	{
+		TextureManager::getInstance()->DeleteTexture(tex);
+		tex = nullptr;
+	}
 }
 

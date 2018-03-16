@@ -96,3 +96,40 @@ Texture * TextureManager::CreateEmptyTexture()
 	return Tex_obj;
 }
 
+Texture3D * TextureManager::CreateEmptyTexture_3D()
+{
+	GLuint TextureID;
+	glGenTextures(1, &TextureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureID);
+
+	Texture3D* Tex_obj = new Texture3D(TextureID);
+	Tex3DArray.push_back(Tex_obj);
+	return Tex_obj;
+}
+
+void TextureManager::DeleteTexture3D(Texture3D * tex)
+{
+	for (auto iter = Tex3DArray.begin(); iter != Tex3DArray.end(); ++iter)
+	{
+		if ((*iter) == tex)
+		{
+			delete tex;
+			iter = Tex3DArray.erase(iter);
+			return;
+		}
+	}
+}
+
+void TextureManager::DeleteTexture(Texture * tex)
+{
+	for (auto iter = TexArray.begin(); iter != TexArray.end(); ++iter)
+	{
+		if ((*iter) == tex)
+		{
+			delete tex;
+			iter = TexArray.erase(iter);
+			return;
+		}
+	}
+}
+

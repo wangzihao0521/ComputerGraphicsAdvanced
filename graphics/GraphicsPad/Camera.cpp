@@ -49,6 +49,37 @@ glm::mat4 Camera::getWorldToViewMatrix()
 	return glm::lookAt(Position, Position + ViewDir, UpDir);
 }
 
+void Camera::switchToFace(int i)
+{
+	switch (i)
+	{
+	case 0:
+		setViewDir(glm::vec3(1, 0, 0));
+		setUpDir(glm::vec3(0, -1, 0));
+		break;
+	case 1:
+		setViewDir(glm::vec3(-1, 0, 0));
+		setUpDir(glm::vec3(0, -1, 0));
+		break;
+	case 2:
+		setViewDir(glm::vec3(0, 1, 0));
+		setUpDir(glm::vec3(0, 0, 1));
+		break;
+	case 3:
+		setViewDir(glm::vec3(0, -1, 0));
+		setUpDir(glm::vec3(0, 0, -1));
+		break;
+	case 4:
+		setViewDir(glm::vec3(0, 0, 1));
+		setUpDir(glm::vec3(0, -1, 0));
+		break;
+	case 5:
+		setViewDir(glm::vec3(0, 0, -1));
+		setUpDir(glm::vec3(0, -1, 0));
+		break;
+	}
+}
+
 void Camera::move_forward()
 {
 	AddPosition(ViewDir * Object::Movement_speed);
@@ -111,6 +142,35 @@ void Camera::rotate_down()
 	//		UpDir = glm::vec3(0, -1, 0);
 	//	if (ViewDir.z < 0)
 	//		UpDir = glm::vec3(0, 1, 0);
+}
+
+void Camera::UpdateProjectionMatrix()
+{
+	if (projection_Mode == Perspective)
+		ProjectionMatrix = glm::perspective(ViewAngle, Aspect, NearPlane, FarPlane);
+	else if (projection_Mode == Orthogonal)
+		ProjectionMatrix = glm::ortho(LeftPlane, RightPlane, TopPlane,BotPlane,NearPlane, FarPlane);
+
+}
+
+void Camera::UpdateDLight_Shadow_ViewMatrix(glm::vec3 light_dir, glm::vec3 camPos, glm::vec3 camViewDir)
+{
+	glm::vec3 focusPos = camPos + glm::vec3(camViewDir.x * 50, camViewDir.y * 50, camViewDir.z * 50);
+	VirtualCamPos = focusPos - glm::vec3(light_dir.x * 250, light_dir.y * 250, light_dir.z * 250);
+	float OffsetMax = 30.0;
+	if (light_dir.x > 0)
+		VirtualCamPos.x -= OffsetMax * (1 - glm::abs(light_dir.x));
+	else 
+		VirtualCamPos.x += OffsetMax * (1 - glm::abs(light_dir.x));
+	if (light_dir.y > 0)
+		VirtualCamPos.y -= OffsetMax * (1 - glm::abs(light_dir.y));
+	else
+		VirtualCamPos.y += OffsetMax * (1 - glm::abs(light_dir.y));
+	if (light_dir.z > 0)
+		VirtualCamPos.z -= OffsetMax * (1 - glm::abs(light_dir.z));
+	else
+		VirtualCamPos.z += OffsetMax * (1 - glm::abs(light_dir.z));
+	DLight_Shadow_ViewMatrix = glm::lookAt(VirtualCamPos, VirtualCamPos + light_dir, glm::vec3(0, 1, 0));
 }
 
 glm::vec3 Camera::getPosition()

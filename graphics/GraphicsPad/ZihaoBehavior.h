@@ -8,7 +8,7 @@ class ZihaoBehavior : public Component
 {
 public :
 	ZihaoBehavior(Object* obj) : Component(obj){}
-	~ZihaoBehavior() {}
+	virtual ~ZihaoBehavior() {}
 
 	virtual void Start() {}
 	virtual void onWillRenderObject() {}

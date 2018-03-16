@@ -8,5 +8,8 @@ int main(int argc, char* argv[])
 		meWindow.tryImportFile(argv[1]);
 	meWindow.show();
 	app.exec();
+
+//	_CrtDumpMemoryLeaks();
+
 	return 0;
 }

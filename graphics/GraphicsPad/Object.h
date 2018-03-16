@@ -19,20 +19,27 @@ public:
 		TRANSFORMATION
 	};
 
-	Object(std::string objName = "object");
+	Object(std::string objName = "");
+	~Object();
 
 	glm::vec3 getCurrentBoundBoxMin() const { return CurrentBoundBoxMin; }
 	glm::vec3 getCurrentBoundBoxMax() const { return CurrentBoundBoxMax; }
 
 	void Render(Object* cam_obj,Light* light, GLsizei screenwidth, GLsizei screenheight);
+	void RenderShadow(Camera* cam);
+	bool Is_Renderable();
 	void CompileAllMaterial();
 	void ComputeCurrentBoundBox();
 	void Unselect() { selected = false; }
 	void Select() { selected = true; }
 	bool IsSelected() { return selected; }
+
 	void UnHide() { hided = false; }
 	void Hide() { hided = true; }
+	void Hide_Change() { hided = !hided; }
 	bool IsHided() { return hided; }
+
+	void setObjType(OBJ_TYPE type) { Obj_type = type; }
 	bool IsTransformationObject();
 	bool IsNormalObject();
 	GLint getRenderQueue() const { return RenderQueue; }
@@ -78,6 +85,8 @@ void Object::AddComponent()
 	if (Component_Map[type] == nullptr)
 	{
 		Component_Map[type] = p;
+		if (type == Component::Type::Light)
+			p->Shadow_Init();
 		return;
 	}
 	else

@@ -1,5 +1,6 @@
 #pragma once
 #include <Component\Component.h>
+#include "Shadow.h"
 
 class Mesh;
 
@@ -13,7 +14,14 @@ public:
 	};
 	Light(Object* obj);
 
-	~Light() {}
+	~Light() 
+	{ 
+		if (shadow)
+		{
+			delete shadow;
+			shadow = nullptr;
+		}
+	}
 
 	glm::vec4 getLightDirection();
 	void setType(Type type) { LightType = type; }
@@ -22,6 +30,13 @@ public:
 	void mouse_RotateUpdate(const glm::vec2 & newMousePosition);
 	void ReComputeLightDir();
 	void changeType();
+	void Shadow_Init();
+	void RenderShadowMap();
+	Shadow* getShadowInfo() const { return shadow; }
+	float getIntensity() const { return Intensity; }
+	float getRadius() const { return radius; }
+	void AddIntensity(float value);
+	
 
 	static Mesh* P_Light_Mesh;
 	static Mesh* D_Light_Mesh;
@@ -31,11 +46,15 @@ protected:
 	float Intensity;
 	glm::vec3 LightColor;
 	Type LightType;
+	Shadow* shadow;
 
 	//Directional Light Properties
 	glm::vec2 oldMousePosition;
 	glm::vec4 lightDir;
 	glm::vec3 TengentDir;
+	
+	//Point Light Properties
+	float radius;
 	
 };
 

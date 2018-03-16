@@ -161,10 +161,12 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SelectionManager.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
+    <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="StaticRenderer.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="VisualTransformManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -185,6 +187,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SelectionManager.h" />
     <ClInclude Include="ShaderCompiler.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="StaticRenderer.h" />
     <ClInclude Include="Texture.h" />
@@ -192,21 +195,30 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex_data.h" />
+    <ClInclude Include="VisualTransformManager.h" />
     <ClInclude Include="ZihaoBehavior.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DefaultFragmentShader.glsl" />
-    <None Include="DefaultVertexShader.glsl" />
+    <None Include="Default\ShaderFile\DefaultFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\DefaultVertexShader.glsl" />
+    <None Include="Default\ShaderFile\DLight_ShadowmapFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\DLight_ShadowmapVertexShader.glsl" />
+    <None Include="Default\ShaderFile\OutlineFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\OutlineVertexShader.glsl" />
+    <None Include="Default\ShaderFile\PureColorFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\PureColorVertexShader.glsl" />
+    <None Include="Default\ShaderFile\SelectionFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\SelectionVertexShader.glsl" />
+    <None Include="Default\ShaderFile\PLight_ShadowmapFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\PLight_ShadowmapVertexShader.glsl" />
+    <None Include="Default\ShaderFile\ShadowCasterFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\ShadowCasterVertexShader.glsl" />
+    <None Include="Default\ShaderFile\SkyboxFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\SkyboxVertexShader.glsl" />
+    <None Include="Default\ShaderFile\StaticFragmentShader.glsl" />
+    <None Include="Default\ShaderFile\StaticVertexShader.glsl" />
     <None Include="MirrorFragmentShader.glsl" />
     <None Include="MirrorVertexShader.glsl" />
-    <None Include="OutlineFragmentShader.glsl" />
-    <None Include="OutlineVertexShader.glsl" />
-    <None Include="SelectionFragmentShader.glsl" />
-    <None Include="SelectionVertexShader.glsl" />
-    <None Include="SkyboxFragmentShader.glsl" />
-    <None Include="SkyboxVertexShader.glsl" />
-    <None Include="StaticFragmentShader.glsl" />
-    <None Include="StaticVertexShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

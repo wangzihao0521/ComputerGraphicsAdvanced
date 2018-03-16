@@ -12,6 +12,17 @@ protected:
 public:
 	Pass(char* V_Shader_File_Name = nullptr, char* F_Shader_File_Name = nullptr) :
 		VshaderFileName(V_Shader_File_Name), FshaderFileName(F_Shader_File_Name) {}
+	~Pass() 
+	{
+		if (VshaderFileName)
+		{
+			VshaderFileName = nullptr;
+		}
+		if (FshaderFileName)
+		{
+			FshaderFileName = nullptr;
+		}
+	}
 
 	GLuint getProgramID() const { return programID; }
 	GLuint getVshaderID() const { return VshaderID; }

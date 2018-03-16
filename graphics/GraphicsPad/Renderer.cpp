@@ -2,13 +2,16 @@
 #include "Mirror.h"
 #include "SkyBox.h"
 #include "SelectionManager.h"
+#include "VisualTransformManager.h"
+
+#define MAX_SHADOW_LIGHT_AMOUNT 4
 
 Renderer* Renderer::Zihao_renderer = nullptr;
 Mesh* Light::D_Light_Mesh = nullptr;
 Mesh* Light::P_Light_Mesh = nullptr;
 Object* Renderer::CurrentCamera = nullptr;
 Object* Renderer::MainCamera = nullptr;
-glm::vec3 Renderer::AmbientColor = glm::vec3(0.3, 0.3, 0.3);
+glm::vec3 Renderer::AmbientColor = glm::vec3(0.1, 0.1, 0.1);
 
 void Renderer::init(GLsizei width, GLsizei height,char* filename)
 {
@@ -25,21 +28,29 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	StaticRenderer::getInstance()->init();
 	SkyBox::getInstance()->init();
 	SelectionManager::getInstance()->init();
+	VisualTransformManager::getInstance()->init();
+
 	CreateCameraInScene("MainCamera");
 	MainCamera = CurrentCamera;
 	Transform* CurCam_Trans = CurrentCamera->getComponent<Transform>();
-	CurCam_Trans->setPosition(glm::vec3(0, 3.3, 35.6));
+	CurCam_Trans->setPosition(glm::vec3(0, 15, 36.0));
+//	MainCamera->getComponent<Camera>()->setViewDir(glm::vec3(-1,0,0));
 
 	Light::P_Light_Mesh = ImportObj("light_bulb.obj");
 	Light::D_Light_Mesh = ImportObj("Directional_light.obj");
 
 	Object* Light1 = CreateLightInScene("Light1");
-	Light1->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 5.0, 3.0));
+	Light1->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 20.0, 3.0));
+	Light1->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
 
-//	Object* Light2 = CreateLightInScene("Light2");
-//	Light2->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 15.0, 0.0));
-////	Light2->getComponent<Transform>()->rotate(glm::vec3 (-65.0,0.0,0.0));
-////	Light2->getComponent<Light>()->setType(Light::Type::Directional);
+	Object* Light2 = CreateLightInScene("Light2");
+	Light2->getComponent<Transform>()->setPosition(glm::vec3(15.0, 15.0, 10.0));
+	Light2->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
+
+//	Object* Light3 = CreateLightInScene("Light3");
+//	Light3->getComponent<Transform>()->setPosition(glm::vec3(0.0, 15.0, 0.0));
+//	Light2->getComponent<Transform>()->rotate(glm::vec3 (-65.0,0.0,0.0));
+//	Light2->getComponent<Light>()->setType(Light::Type::Directional);
 
 	Material::AmbientColor = AmbientColor;
 
@@ -56,9 +67,10 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	CurrentObject[0]->AddCustomComponent<Mirror>();
 	CurrentObject[0]->getCustomComponent<Mirror>()->Start();
 	Material* M_mirror = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	MaterialArray.push_back(M_mirror);
 	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
 
-	Mesh *teapot = ImportObj("Assets\\teapot.obj");
+	Mesh *teapot = ImportObj("Assets\\teapot1.obj");
 	if (!teapot)
 		return;
 	PutMeshInScene(teapot);
@@ -67,6 +79,7 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	CurObj_Trans->setPosition(glm::vec3(0, 0, 0));
 	CurObj_Trans->setScale(glm::vec3(0.65, 0.65, 0.65));
 	Material* teapotRFL = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	MaterialArray.push_back(teapotRFL);
 	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, teapotRFL);
 	//	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
 	//	CurrentObject->AddComponent<Light>();
@@ -82,6 +95,20 @@ Renderer * Renderer::getInstance()
 		return Zihao_renderer;
 	Zihao_renderer = new Renderer();
 	return Zihao_renderer;
+}
+
+void Renderer::Start()
+{
+	RenderToShadowMap();
+	RenderToScene();
+}
+
+void Renderer::RenderToShadowMap()
+{
+	for (auto iter = LightArray.begin(); iter != LightArray.end(); ++iter)
+	{
+		(*iter)->RenderShadowMap();
+	}
 }
 
 void Renderer::RenderToScene()
@@ -105,16 +132,52 @@ void Renderer::RenderToScene()
 		{
 			behavior_iter->second->onWillRenderObject();
 		}
-		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
+		if (LightArray.empty())
 		{
-			(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_ONE, GL_ONE);
+			(*iter)->Render(MainCamera, nullptr, ScreenWidth, ScreenHeight);
 		}
-		glDisable(GL_BLEND);
-		ObjectInSceneArray.push_back(*iter);
+		else
+		{
+			std::vector<Light*> CastShadowLights = getLight_CastShadow();
+			if (CastShadowLights.empty())
+			{
+				for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
+				{
+					(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_ONE, GL_ONE);
+				}
+				glDisable(GL_BLEND);
+			}
+			else
+			{
+				for (auto Light_iter = CastShadowLights.begin(); Light_iter != CastShadowLights.end(); Light_iter++)
+				{
+					(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_ONE, GL_ONE);
+				}
+				glDisable(GL_BLEND);
+				(*iter)->RenderShadow(MainCamera->getComponent<Camera>());
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_ONE, GL_ONE);
+				for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
+				{
+					if (!(*Light_iter)->getShadowInfo()->Cast_Shadow)
+					{
+						(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+					}
+				}
+				glDisable(GL_BLEND);
+			}
+			if ((*iter)->Is_Renderable())
+			{
+				ObjectInSceneArray.push_back(*iter);
+			}
+			
+		}
 	}
-	RenderSelectionOutline();
+	RenderSelectionOutlineAndTransformationMesh();
 	ObjectInSceneArray.clear();
 	
 }
@@ -257,6 +320,35 @@ void Renderer::ClearCurrentObject()
 	CurrentObject.clear();
 }
 
+void Renderer::deleteCurrentObjects()
+{
+	for (auto Cur_iter = CurrentObject.begin(); Cur_iter != CurrentObject.end(); ++Cur_iter)
+	{
+		Light* light = (*Cur_iter)->getComponent<Light>();
+		if (light)
+		{
+			for (auto light_iter = LightArray.begin(); light_iter != LightArray.end(); ++light_iter)
+			{
+				if (light == *light_iter)
+				{
+					LightArray.erase(light_iter);
+					break;
+				}
+			}
+		}
+		for (auto Obj_iter = ObjectArray.begin(); Obj_iter != ObjectArray.end(); ++Obj_iter)
+		{
+			if ((*Cur_iter) == (*Obj_iter))
+			{
+				delete (*Obj_iter);
+				Obj_iter = ObjectArray.erase(Obj_iter);
+				break;
+			}
+		}
+	}
+	CurrentObject.clear();
+}
+
 void Renderer::AddCurrentObject(Object * obj)
 {
 	if (!obj)
@@ -325,8 +417,13 @@ Object * Renderer::getObjectByScreenPos(glm::vec2 pos)
 	GLint	i = 1;
 	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
 	{
-		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, i);
-		++i;
+		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, i++);
+	}
+	if (!CurrentObject.empty())
+	{
+		glDisable(GL_DEPTH_TEST);
+		VisualTransformManager::getInstance()->Render(CurrentObject[0]->getComponent<Transform>()->getPosition(), i);
+		glEnable(GL_DEPTH_TEST);
 	}
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 	GLint ObjectID = -1;
@@ -334,13 +431,77 @@ Object * Renderer::getObjectByScreenPos(glm::vec2 pos)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	if (ObjectID <= 0)
 		return nullptr;
-	return ObjectArray[ObjectID - 1];
+	else if (ObjectID <= ObjectArray.size())
+		return ObjectArray[ObjectID - 1];
+	else
+	{
+		VisualTransformManager::getInstance()->getObjectById(ObjectID - ObjectArray.size());
+	}
 }
 
 void Renderer::SelectObjectById(GLint id)
 {
 	ClearCurrentObject();
 	AddCurrentObject(ObjectArray[id - 1]);
+}
+
+void Renderer::CurObjectTranslate_X(float cursorDelta)
+{
+	if (CurrentObject.empty())
+		return;
+	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
+	{
+		(*iter)->getComponent<Transform>()->translate(glm::vec3(cursorDelta, 0, 0));
+	}
+}
+
+void Renderer::CurObjectTranslate_Y(float cursorDelta)
+{
+	if (CurrentObject.empty())
+		return;
+	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
+	{
+		(*iter)->getComponent<Transform>()->translate(glm::vec3(0, cursorDelta, 0));
+	}
+}
+
+void Renderer::CurObjectTranslate_Z(float cursorDelta)
+{
+	if (CurrentObject.empty())
+		return;
+	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
+	{
+		(*iter)->getComponent<Transform>()->translate(glm::vec3(0, 0, cursorDelta));
+	}
+}
+
+void Renderer::RenderObject_CastShadow(Camera * cam, Light::Type light_type)
+{
+	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); ++iter)
+	{
+		Mesh_Renderer* msh_render = (*iter)->getComponent<Mesh_Renderer>();
+		Mesh_Filter* msh_flter = (*iter)->getComponent<Mesh_Filter>();
+		if (!(*iter)->Is_Renderable())
+			continue;	
+		else if (msh_render->Is_shadow_caster())
+		{
+			if (light_type == Light::Type::Point_Light)
+				StaticRenderer::getInstance()->Render_Shadowmap_PLight(msh_flter->getMesh(), (*iter)->getComponent<Transform>(), cam);
+			else if (light_type == Light::Type::Directional)
+				StaticRenderer::getInstance()->Render_Shadowmap_DLight(msh_flter->getMesh(), (*iter)->getComponent<Transform>(), cam);
+		}
+	}
+}
+
+std::vector<Light*> Renderer::getLight_CastShadow()
+{
+	std::vector<Light*> l;
+	for (auto iter = LightArray.begin(); iter != LightArray.end(); ++iter)
+	{
+		if ((*iter)->getShadowInfo()->Cast_Shadow)
+			l.push_back(*iter);
+	}
+	return l;
 }
 
 
@@ -424,14 +585,12 @@ int Renderer::Partition(int low, int high)
 	return i + 1;
 }
 
-void Renderer::RenderSelectionOutline()
+void Renderer::RenderSelectionOutlineAndTransformationMesh()
 {
 	if (CurrentObject.empty())
 		return;
-//	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//	glBlendFunc(GL_ONE, GL_ONE);
 	glUseProgram(SelectionManager::getInstance()->getOutlinePass()->getProgramID());
 	for (auto iter = CurrentObject.begin(); iter != CurrentObject.end(); ++iter)
 	{
@@ -439,5 +598,10 @@ void Renderer::RenderSelectionOutline()
 			continue;
 		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, 0);
 	}
+//	glDisable(GL_BLEND);
+	GLint id = 0;
+	glDisable(GL_DEPTH_TEST);
+	VisualTransformManager::getInstance()->Render(CurrentObject[0]->getComponent<Transform>()->getPosition(),id);
+	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 }

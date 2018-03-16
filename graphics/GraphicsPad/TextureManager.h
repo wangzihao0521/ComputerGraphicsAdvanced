@@ -14,6 +14,9 @@ public:
 	GLfloat getMagFilter(Texture* tex);
 	GLfloat getMinFilter(Texture* tex);
 	Texture* CreateEmptyTexture();
+	Texture3D* CreateEmptyTexture_3D();
+	void DeleteTexture3D(Texture3D* tex);
+	void DeleteTexture(Texture* tex);
 
 
 	static Texture* WHITE;

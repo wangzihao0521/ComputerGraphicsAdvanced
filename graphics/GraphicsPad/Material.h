@@ -42,25 +42,30 @@ protected:
 public:
 	Material(std::string Materialname = "Material", char* Vshaderfilename = "Default\\ShaderFile\\DefaultVertexShader.glsl", char* Fshaderfilename = "Default\\ShaderFile\\DefaultFragmentShader.glsl");
 	Material(Mesh * M,cyTriMesh::Mtl & mat,char* path_name, int firstface, int facecount);
+	~Material();
 	void ExecuteEveryPass(Transform* transform, Object* cam,Light* light, GLsizei screenwidth, GLsizei screenheight);
 	void ReCompileShaders();
 	void set_PathName(std::string path_name) { PathName = path_name; }
 	void set_Facecount(int i) { face_count = i; }
 	void BindMesh(Mesh* msh) { mesh = msh; }
 	Mesh* getMesh() const { return mesh; }
+	int getFirstface() const { return first_face; }
+	int getFacecount() const { return face_count; }
 	
 //	Texture* get_map_Kd() const { return map_Kd; }
 
 	glm::mat4 MirrorCamMatrix;   //just for implement the mirror conveniently for now. I will add customized properties to material later.
-	void Bind_newmap_FBOTexUnit();
+	void Bind_newmap_FBOTexUnit(Texture * tex);
+
 
 	static glm::vec3 AmbientColor;
 
 private:
-	void Add_Zihao_MVP(Pass* pass, Transform* transform,Object* cam, GLsizei screenwidth, GLsizei screenheight);
+	void Add_Zihao_MVP(Pass* pass, Transform* transform,Object* cam, GLsizei screenwidth, GLsizei screenheight,Light* light);
 	void Add_Light_Uniform(Pass* pass,Light* light);
 	void Add_Default_Parameter(Pass* pass);
 	void BindTex_Shader(GLint UniformLocation, int& Tex_Unit_number,Texture* map);
 	void FeedShader_tex(GLint UniformLocation, int& Tex_Unit_number, Texture* map, Texture* DefaultTex);
+	void _ReleaseTex(Texture* & tex);
 };
 

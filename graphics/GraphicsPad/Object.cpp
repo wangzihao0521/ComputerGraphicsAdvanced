@@ -10,9 +10,21 @@ Object::Object(std::string objName) :
 	AddComponent<Transform>();
 }
 
+Object::~Object()
+{
+	for (auto iter = CustomComponent_Map.begin(); iter != CustomComponent_Map.end(); ++iter)
+	{
+		delete iter->second;
+	}
+	for (auto iter = Component_Map.begin(); iter != Component_Map.end(); ++iter)
+	{
+		delete iter->second;
+	}
+}
+
 void Object::Render(Object* cam_obj, Light* light,GLsizei screenwidth, GLsizei screenheight)
 {
-	if (getComponent<Mesh_Filter>() && getComponent<Mesh_Renderer>())
+	if (Is_Renderable())
 		getComponent<Mesh_Renderer>()->Render(cam_obj,light, screenwidth, screenheight);
 
 	else if (getComponent<Light>())
@@ -22,6 +34,22 @@ void Object::Render(Object* cam_obj, Light* light,GLsizei screenwidth, GLsizei s
 		else if (getComponent<Light>()->getLightType() == Light::Type::Directional)
 			StaticRenderer::getInstance()->Render(Light::D_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
 	}
+}
+
+void Object::RenderShadow(Camera * cam)
+{
+	if (!getComponent<Mesh_Filter>() || !getComponent<Mesh_Filter>()->getMesh())
+		return;
+	else if (!getComponent<Mesh_Renderer>() || !getComponent<Mesh_Renderer>()->Is_shadow_receiver())
+		return;
+	StaticRenderer::getInstance()->RenderShadow(getComponent<Mesh_Filter>()->getMesh(), getComponent<Transform>(), cam);
+}
+
+bool Object::Is_Renderable()
+{
+	if (getComponent<Mesh_Filter>() && getComponent<Mesh_Filter>()->getMesh() && getComponent<Mesh_Renderer>() && hided == false)
+		return true;
+	return false;
 }
 
 void Object::CompileAllMaterial()

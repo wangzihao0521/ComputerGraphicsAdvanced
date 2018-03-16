@@ -38,6 +38,10 @@
     <ClCompile Include="SelectionManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Shadow.cpp" />
+    <ClCompile Include="VisualTransformManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
@@ -94,6 +98,10 @@
     <ClInclude Include="SelectionManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="VisualTransformManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MirrorVertexShader.glsl">
@@ -102,34 +110,58 @@
     <None Include="MirrorFragmentShader.glsl">
       <Filter>ShaderFile\UserShaderFile</Filter>
     </None>
-    <None Include="DefaultFragmentShader.glsl">
+    <None Include="Default\ShaderFile\DefaultFragmentShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="DefaultVertexShader.glsl">
+    <None Include="Default\ShaderFile\DefaultVertexShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="SelectionFragmentShader.glsl">
+    <None Include="Default\ShaderFile\OutlineFragmentShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="SelectionVertexShader.glsl">
+    <None Include="Default\ShaderFile\OutlineVertexShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="SkyboxFragmentShader.glsl">
+    <None Include="Default\ShaderFile\PureColorFragmentShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="SkyboxVertexShader.glsl">
+    <None Include="Default\ShaderFile\PureColorVertexShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="StaticFragmentShader.glsl">
+    <None Include="Default\ShaderFile\SelectionFragmentShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="StaticVertexShader.glsl">
+    <None Include="Default\ShaderFile\SelectionVertexShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="OutlineVertexShader.glsl">
+    <None Include="Default\ShaderFile\SkyboxFragmentShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
-    <None Include="OutlineFragmentShader.glsl">
+    <None Include="Default\ShaderFile\SkyboxVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\StaticFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\StaticVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\PLight_ShadowmapFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\PLight_ShadowmapVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\DLight_ShadowmapFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\DLight_ShadowmapVertexShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\ShadowCasterFragmentShader.glsl">
+      <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="Default\ShaderFile\ShadowCasterVertexShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
     </None>
   </ItemGroup>

@@ -20,6 +20,8 @@ public:
 	
 	virtual ~Component(){}
 
+	virtual void Shadow_Init() {}
+
 	Type getType() const { return type; }
 	Object* getObject() const { return object; }
 

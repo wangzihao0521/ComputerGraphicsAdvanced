@@ -120,7 +120,6 @@ std::string ShaderCompiler::ReadShaderCode(const char* fileName)
 	if (!meInput.good())
 	{
 		std::cout << "File failed to load..." << fileName;
-		exit(1);
 	}
 	return std::string(
 		std::istreambuf_iterator<char>(meInput),

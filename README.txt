@@ -6,6 +6,3 @@ I'm using Microsoft Visual Studio 2015 as my developing environment. There might
 are using a different version of VS. Figure that out on your own.
 
 If you have any questions or suggestions, please email me at wangzihao0521@hotmail.com. Thank you.
-
-PS: From this Assignment on, you don't need to set default command arguments to draw anything. All the scene are set.
-For the old commits, set Visual Studio default command arguments to Assets\yoda.obj to draw the character in the scene. 

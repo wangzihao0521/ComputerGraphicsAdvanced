@@ -53,9 +53,11 @@ void SelectionManager::SelectionRender(Object * obj, Object * cam_obj, GLsizei s
 	Camera* Camera_Component = cam_obj->getComponent<Camera>();
 	if (!Camera_Component)
 		return;
+	if (obj->IsHided())
+		return;
 
 	Mesh* msh = nullptr;
-	if (obj->getComponent<Mesh_Filter>() && obj->getComponent<Mesh_Renderer>())
+	if (obj->getComponent<Mesh_Filter>())
 		msh = obj->getComponent<Mesh_Filter>()->getMesh();
 
 	else if (obj->getComponent<Light>())
@@ -73,14 +75,7 @@ void SelectionManager::SelectionRender(Object * obj, Object * cam_obj, GLsizei s
 
 	glm::mat4 CameraMatrix = Camera_Component->getWorldToViewMatrix();
 
-	glm::mat4 projectionMatrix = glm::mat4();
-	if (Camera_Component->getPJ_Mode() == Perspective)
-		projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 500.0f);
-	else if (Camera_Component->getPJ_Mode() == Orthogonal)
-	{
-		float distance = glm::distance(transform->getPosition(), cam_obj->getComponent<Transform>()->getPosition());
-		projectionMatrix = glm::ortho(-distance / 2, distance / 2, -distance / 2, distance / 2, 1.0f, 100.0f);
-	}
+	glm::mat4 projectionMatrix = Camera_Component->getProjectionMatrix();
 
 	glm::mat4 TransformMatrix = glm::translate(glm::mat4(), transform->getPosition());
 	glm::mat4 RotationMatrix = glm::rotate(glm::mat4(), transform->getRotation().y, glm::vec3(0, 1, 0)) *

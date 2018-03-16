@@ -69,7 +69,7 @@ void SkyBox::Render(Object * cam, GLsizei screenwidth, GLsizei screenheight)
 
 	glm::mat4 CameraMatrix = Camera_Component->getWorldToViewMatrix();
 
-	glm::mat4 projectionMatrix = glm::perspective(60.0f, ((float)screenwidth / screenheight), 0.3f, 500.0f);
+	glm::mat4 projectionMatrix = Camera_Component->getProjectionMatrix();
 
 	CameraMatrix[3][0] = 0;
 	CameraMatrix[3][1] = 0;

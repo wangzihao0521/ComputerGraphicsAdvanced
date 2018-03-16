@@ -18,12 +18,11 @@ protected:
 	char* importFileName = nullptr;
 
 	glm::vec2 clickPos;
+	glm::vec2 oldMousePosition;
 	bool MouseHolder = false;
 	bool StartTransform = false;
 
 	Object* PrefetchObject;
-
-	
 
 public:
 	void keyPressEvent(QKeyEvent*);

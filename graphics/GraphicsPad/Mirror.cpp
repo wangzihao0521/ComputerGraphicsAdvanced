@@ -2,6 +2,20 @@
 #include <glm\gtc\matrix_transform.hpp>
 
 
+Mirror::~Mirror()
+{
+	if (MirrorCamera)
+	{
+		delete MirrorCamera;
+		MirrorCamera = nullptr;
+	}
+	if (FBO)
+	{
+		delete FBO;
+		FBO = nullptr;
+	}
+}
+
 void Mirror::Start()
 {
 	MirrorCamera = new Object("MirrorCamera");
@@ -31,8 +45,8 @@ void Mirror::onWillRenderObject()
 
 	Material* mat = object->getComponent<class Mesh_Renderer>()->getMaterialbyIndex(0);
 
-	mat->Bind_newmap_FBOTexUnit();
-	mat->MirrorCamMatrix = glm::perspective(60.0f, ((float)Renderer::getInstance()->ScreenWidth / Renderer::getInstance()->ScreenHeight), 0.3f, 500.0f) * MirrorCamera->getComponent<class Camera>()->getWorldToViewMatrix();
+	mat->Bind_newmap_FBOTexUnit(FBO->ColorTexture);
+	mat->MirrorCamMatrix = MirrorCamera->getComponent<class Camera>()->getProjectionMatrix() * MirrorCamera->getComponent<class Camera>()->getWorldToViewMatrix();
 
 
 }

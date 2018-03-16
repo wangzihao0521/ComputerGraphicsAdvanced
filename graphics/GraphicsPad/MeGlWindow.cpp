@@ -1,4 +1,5 @@
 #include <MeGlWindow.h>
+#include "VisualTransformManager.h"
 
 void MeGlWindow::initializeGL()
 {
@@ -12,7 +13,7 @@ void MeGlWindow::initializeGL()
 
 void MeGlWindow::paintGL()
 {	
-	renderer()->RenderToScene();
+	renderer()->Start();
 }
 
 void MeGlWindow::TimerInit()
@@ -34,51 +35,81 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 	{
 		switch (e->key())
 		{
-		case Qt::Key::Key_W:
-			renderer()->getCurrentLight()->getComponent<Transform>()->translate(glm::vec3(0,0,-Object::Movement_speed));
-			break;
-		case Qt::Key::Key_S:
-			renderer()->getCurrentLight()->getComponent<Transform>()->translate(glm::vec3(0, 0, Object::Movement_speed));
-			break;
-		case Qt::Key::Key_A:
-			renderer()->getCurrentLight()->getComponent<Transform>()->translate(glm::vec3(-Object::Movement_speed, 0, 0));
-			break;
-		case Qt::Key::Key_D:
-			renderer()->getCurrentLight()->getComponent<Transform>()->translate(glm::vec3(Object::Movement_speed, 0, 0));
-			break;
 		case Qt::Key::Key_R:
-			renderer()->getCurrentLight()->getComponent<Transform>()->translate(glm::vec3(0, Object::Movement_speed, 0));
-			break;
-		case Qt::Key::Key_F:
-			renderer()->getCurrentLight()->getComponent<Transform>()->translate(glm::vec3(0, -Object::Movement_speed, 0));
-			break;
-		case Qt::Key::Key_Q:
 		{
-			renderer()->getCurrentLight()->getComponent<Transform>()->rotate(glm::vec3(0, Object::Rotation_speed, 0));
-			renderer()->getCurrentLight()->getComponent<Light>()->ReComputeLightDir();
-			break;
-		}
-		case Qt::Key::Key_E:
-		{
-			renderer()->getCurrentLight()->getComponent<Transform>()->rotate(glm::vec3(0, -Object::Rotation_speed, 0));
-			renderer()->getCurrentLight()->getComponent<Light>()->ReComputeLightDir();
-			break;
-		}
-		case Qt::Key::Key_Z:
-		{
-			renderer()->getCurrentLight()->getComponent<Transform>()->rotate(glm::vec3(Object::Rotation_speed, 0, 0));
-			renderer()->getCurrentLight()->getComponent<Light>()->ReComputeLightDir();
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				Mesh_Renderer* mr_component = (*iter)->getComponent<Mesh_Renderer>();
+				if (mr_component)
+					mr_component->ReceiveShadow_Change();
+			}
 			break;
 		}
 		case Qt::Key::Key_C:
 		{
-			renderer()->getCurrentLight()->getComponent<Transform>()->rotate(glm::vec3(-Object::Rotation_speed, 0, 0));
-			renderer()->getCurrentLight()->getComponent<Light>()->ReComputeLightDir();
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				Mesh_Renderer* mr_component = (*iter)->getComponent<Mesh_Renderer>();
+				if (mr_component)
+					mr_component->CastShadow_Change();
+			}
+			break;
+		}
+		case Qt::Key::Key_H:
+		{
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				(*iter)->Hide_Change();
+			}
+			break;
+		}
+		case Qt::Key::Key_S:
+		{
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				Light* light_component = (*iter)->getComponent<Light>();
+				if (light_component)
+					light_component->getShadowInfo()->Cast_Shadow_Change();
+			}
 			break;
 		}
 		case Qt::Key::Key_T:
-			renderer()->getCurrentLight()->getComponent<Light>()->changeType();
+		{
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				Light* light_component = (*iter)->getComponent<Light>();
+				if (light_component)
+					light_component->changeType();
+			}
 			break;
+		}
+		case Qt::Key::Key_I:
+		{
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				Light* light_component = (*iter)->getComponent<Light>();
+				if (light_component)
+					light_component->AddIntensity(0.1);
+			}
+			break;
+		}
+		case Qt::Key::Key_J:
+		{
+			std::vector<Object*> cur_obj = renderer()->getCurrentObject();
+			for (auto iter = cur_obj.begin(); iter != cur_obj.end(); ++iter)
+			{
+				Light* light_component = (*iter)->getComponent<Light>();
+				if (light_component)
+					light_component->AddIntensity(-0.1);
+			}
+			break;
+		}
 		default:
 			break;
 		}
@@ -89,6 +120,8 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 		{
 		case Qt::Key::Key_Escape:
 			qApp->quit();
+		case Qt::Key::Key_Delete:
+			renderer()->deleteCurrentObjects();
 		case Qt::Key::Key_W:
 			renderer()->getMainCamera()->getComponent<Camera>()->move_forward();
 			break;
@@ -123,12 +156,14 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 			renderer()->ReCompileALLShader();
 			break;
 		case Qt::Key::Key_P:
+		{
 			renderer()->getMainCamera()->getComponent<Camera>()->ChangePJ_Mode();
 			break;
+		}
 		case Qt::Key::Key_Tab:
 			renderer()->SwitchToNextLight();
 			break;
-		case Qt::Key::Key_T:
+		/*case Qt::Key::Key_T:
 		{
 			std::vector<Object*> Cur_obj = renderer()->getCurrentObject();
 			for (auto iter = Cur_obj.begin(); iter != Cur_obj.end(); ++iter)
@@ -136,6 +171,11 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 				(*iter)->ComputeCurrentBoundBox();
 				renderer()->getMainCamera()->getComponent<Camera>()->CenterOnBoundingBox((*iter)->getCurrentBoundBoxMin(), (*iter)->getCurrentBoundBoxMax());
 			}
+			break;
+		}*/
+		case Qt::Key::Key_L:
+		{
+			Object* light = renderer()->CreateLightInScene();
 			break;
 		}
 		default:
@@ -146,9 +186,12 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 
 void MeGlWindow::mouseMoveEvent(QMouseEvent* e)
 {
+	glm::vec2 mouseDelta = glm::vec2(e->x(), e->y()) - oldMousePosition;
+	oldMousePosition = glm::vec2(e->x(), e->y());
 	if (StartTransform)
 	{
-
+		setMouseTracking(true);
+		VisualTransformManager::getInstance()->executeTransform(PrefetchObject, mouseDelta);
 	}
 	else
 	{
@@ -183,6 +226,7 @@ void MeGlWindow::mousePressEvent(QMouseEvent * e)
 		if (e->button() == Qt::LeftButton)
 		{
 			clickPos = glm::vec2(e->x(), e->y());
+			oldMousePosition = clickPos;
 			PrefetchObject = Renderer::getInstance()->getObjectByScreenPos(clickPos);
 			if (PrefetchObject && PrefetchObject->IsTransformationObject())
 			{
@@ -197,7 +241,9 @@ void MeGlWindow::mouseReleaseEvent(QMouseEvent * e)
 {
 	if (e->button() == Qt::LeftButton)
 	{
-		if (PrefetchObject && PrefetchObject->IsNormalObject())
+		if (!PrefetchObject)
+			Renderer::getInstance()->ClearCurrentObject();
+		else if (PrefetchObject->IsNormalObject())
 		{
 			glm::vec2 mouseDelta = glm::vec2(e->x(), e->y()) - clickPos;
 			if (glm::length(mouseDelta) < 20.0f)
@@ -210,11 +256,12 @@ void MeGlWindow::mouseReleaseEvent(QMouseEvent * e)
 					Renderer::getInstance()->AddCurrentObject(PrefetchObject);
 				}
 			}
-		}
+		}		
 		clickPos = glm::vec2(0, 0);
 	}
 	MouseHolder = false;
 	StartTransform = false;
+	setMouseTracking(false);
 }
 
 void MeGlWindow::tryImportFile(char * filename)

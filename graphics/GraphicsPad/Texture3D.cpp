@@ -1,10 +1,23 @@
 #include "Texture3D.h"
+#include "TextureManager.h"
 
-Texture3D::Texture3D(GLuint TexID) : name("CubeTexture"), TextureID(TexID)
+Texture3D::Texture3D(GLuint TexID) : Texture("CubeMap",nullptr, TexID)
 {
 	for (int i = 0; i < 6; ++i)
 	{
 		textures[i] = nullptr;
+	}
+}
+
+Texture3D::~Texture3D()
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		if (textures[i])
+		{
+			TextureManager::getInstance()->DeleteTexture(textures[i]);
+			textures[i] = nullptr;
+		}
 	}
 }
 

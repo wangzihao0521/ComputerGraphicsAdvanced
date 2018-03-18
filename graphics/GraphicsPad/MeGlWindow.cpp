@@ -264,6 +264,12 @@ void MeGlWindow::mouseReleaseEvent(QMouseEvent * e)
 	setMouseTracking(false);
 }
 
+void MeGlWindow::resizeEvent(QResizeEvent * e)
+{
+	renderer()->ScreenSizeUpdate(width(), height());
+	renderer()->ObjectResizeEvent();
+}
+
 void MeGlWindow::tryImportFile(char * filename)
 {
 	importFileName = filename;
@@ -271,7 +277,6 @@ void MeGlWindow::tryImportFile(char * filename)
 
 void MeGlWindow::updateGL()
 {
-	renderer()->ScreenSizeUpdate(width(),height());
 	renderer()->ObjectUpdate();
 	repaint();
 }

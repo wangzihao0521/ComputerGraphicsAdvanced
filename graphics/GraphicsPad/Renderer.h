@@ -35,6 +35,7 @@ public:
 	void ReCompileALLShader();
 	Mesh* ImportObj(char* filename);
 	void ObjectUpdate();
+	void ObjectResizeEvent();
 	void ScreenSizeUpdate(GLsizei width, GLsizei height);
 
 	void PutMeshInScene(Mesh* mesh);

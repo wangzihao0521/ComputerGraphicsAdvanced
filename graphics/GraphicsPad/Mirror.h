@@ -13,6 +13,7 @@ public:
 	void Start();
 	void Update();
 	void onWillRenderObject();
+	void ResizeEvent();
 
 protected:
 	Object* MirrorCamera;

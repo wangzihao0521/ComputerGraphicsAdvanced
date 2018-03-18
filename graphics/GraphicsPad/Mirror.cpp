@@ -25,7 +25,7 @@ void Mirror::Start()
 
 void Mirror::Update()
 {
-	FBO->UpdateTexSize(Renderer::getInstance()->ScreenWidth, Renderer::getInstance()->ScreenHeight);
+//	FBO->UpdateTexSize(Renderer::getInstance()->ScreenWidth, Renderer::getInstance()->ScreenHeight);
 }
 
 void Mirror::onWillRenderObject()
@@ -50,4 +50,9 @@ void Mirror::onWillRenderObject()
 	mat->MirrorCamMatrix = MirrorCamera->getComponent<class Camera>()->getProjectionMatrix() * MirrorCamera->getComponent<class Camera>()->getWorldToViewMatrix();
 
 
+}
+
+void Mirror::ResizeEvent()
+{
+	FBO->UpdateTexSize(Renderer::getInstance()->ScreenWidth, Renderer::getInstance()->ScreenHeight);
 }

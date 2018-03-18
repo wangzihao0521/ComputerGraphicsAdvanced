@@ -29,6 +29,7 @@ public:
 	void mouseMoveEvent(QMouseEvent* e);
 	void mousePressEvent(QMouseEvent* e);
 	void mouseReleaseEvent(QMouseEvent* e);
+	void resizeEvent(QResizeEvent * e);
 	void tryImportFile(char* filename);
 
 private slots :

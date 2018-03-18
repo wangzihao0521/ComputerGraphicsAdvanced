@@ -43,7 +43,7 @@ void main()
 
 	float alpha = clamp((DiffuseTexCol.a - 0.5) * 100,0,1);
 
-	pixelcolor = vec4(DiffuseColor + SpecularColor + AmbientColor,alpha);
+	pixelcolor = vec4(DiffuseColor + SpecularColor + AmbientColor,DiffuseTexCol.a);
 //	pixelcolor = vec4(lightVector,1.0);
 //	pixelcolor = vec4(VertexNormal_WS,1.0);
 //	pixelcolor = texture(DeFt_Mtl_map_Kd,uv);

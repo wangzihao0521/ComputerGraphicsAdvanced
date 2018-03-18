@@ -13,4 +13,5 @@ public :
 	virtual void Start() {}
 	virtual void onWillRenderObject() {}
 	virtual void Update() {}
+	virtual void ResizeEvent() {}
 };

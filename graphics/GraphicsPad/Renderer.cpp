@@ -224,7 +224,7 @@ void Renderer::RenderToScene()
 	}
 	RenderSelectionOutlineAndTransformationMesh();
 	ObjectInSceneArray.clear();
-	
+	GLenum err = glGetError();
 }
 
 void Renderer::RenderToTexture(Object * Cam, FrameBuffer * FBO)
@@ -320,6 +320,19 @@ void Renderer::ObjectUpdate()
 		for (auto behavior_iter = (*iter)->CustomComponent_Map.begin(); behavior_iter != (*iter)->CustomComponent_Map.end(); ++behavior_iter)
 		{
 			behavior_iter->second->Update();
+		}
+	}
+}
+
+void Renderer::ObjectResizeEvent()
+{
+	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
+	{
+		if ((*iter)->IsHided())
+			continue;
+		for (auto behavior_iter = (*iter)->CustomComponent_Map.begin(); behavior_iter != (*iter)->CustomComponent_Map.end(); ++behavior_iter)
+		{
+			behavior_iter->second->ResizeEvent();
 		}
 	}
 }

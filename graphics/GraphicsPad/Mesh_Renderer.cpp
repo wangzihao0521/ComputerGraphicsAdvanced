@@ -11,13 +11,15 @@ Mesh_Renderer::~Mesh_Renderer()
 
 void Mesh_Renderer::Render(Object * cam_obj,class Light* light, GLsizei screenwidth, GLsizei screenheight)
 {
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.5);
 	for (auto iter = MaterialArray.begin(); iter != MaterialArray.end(); iter++)
 	{
 		Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
 		glBindVertexArray(mesh->getVArrayID());
 		(*iter)->ExecuteEveryPass(object->getComponent<class Transform>(), cam_obj, light, screenwidth, screenheight);
 	}
-
+	glDisable(GL_ALPHA_TEST);
 }
 
 void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)

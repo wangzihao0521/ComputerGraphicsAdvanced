@@ -29,7 +29,8 @@ void main()
 	vec3 lightVector = mix(-Zihao_LightPosition_WS.rgb,normalize(Zihao_LightPosition_WS.rgb - VertexPos_WS),Zihao_LightPosition_WS.a);
 	float brightness = clamp(dot(lightVector, VertexNormal_WS),0,1);
 	vec3 DiffuseLight = vec3(brightness,brightness,brightness) * Light_Intensity;
-	vec3 DiffuseColor = vec3(texture(DeFt_Mtl_map_Kd,uv)) * DiffuseLight * DeFt_Mtl_Kd;
+	vec4 DiffuseTexCol = texture(DeFt_Mtl_map_Kd,uv);
+	vec3 DiffuseColor = vec3(DiffuseTexCol) * DiffuseLight * DeFt_Mtl_Kd;
 
 	vec3 viewdirection = normalize(Zihao_ViewPosition_WS - VertexPos_WS);
 	vec3 Half = normalize(lightVector + viewdirection);
@@ -40,7 +41,9 @@ void main()
 	vec3 AmbientLight = Zihao_AmbientColor;
 	vec3 AmbientColor = vec3(texture(DeFt_Mtl_map_Ka,uv)) * AmbientLight * DeFt_Mtl_Ka;
 
-	pixelcolor = vec4(DiffuseColor + SpecularColor + AmbientColor,1.0);
+	float alpha = clamp((DiffuseTexCol.a - 0.5) * 100,0,1);
+
+	pixelcolor = vec4(DiffuseColor + SpecularColor + AmbientColor,alpha);
 //	pixelcolor = vec4(lightVector,1.0);
 //	pixelcolor = vec4(VertexNormal_WS,1.0);
 //	pixelcolor = texture(DeFt_Mtl_map_Kd,uv);

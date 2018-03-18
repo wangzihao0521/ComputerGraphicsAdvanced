@@ -51,6 +51,10 @@ public:
 	Mesh* getMesh() const { return mesh; }
 	int getFirstface() const { return first_face; }
 	int getFacecount() const { return face_count; }
+	void BindDiffuseMap(Texture* tex) { map_Kd = tex; }
+	void BindAmbientMap(Texture* tex) { map_Ka = tex; }
+	void BindSpecularMap(Texture* tex) { map_Ks = tex; }
+	void setAmbientFactor(glm::vec3 value) { Ka[0] = value.x; Ka[1] = value.y;Ka[2] = value.z;}
 	
 //	Texture* get_map_Kd() const { return map_Kd; }
 

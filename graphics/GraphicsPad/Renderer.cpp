@@ -3,6 +3,7 @@
 #include "SkyBox.h"
 #include "SelectionManager.h"
 #include "VisualTransformManager.h"
+#include "KeepRotating.h"
 
 #define MAX_SHADOW_LIGHT_AMOUNT 4
 
@@ -11,7 +12,7 @@ Mesh* Light::D_Light_Mesh = nullptr;
 Mesh* Light::P_Light_Mesh = nullptr;
 Object* Renderer::CurrentCamera = nullptr;
 Object* Renderer::MainCamera = nullptr;
-glm::vec3 Renderer::AmbientColor = glm::vec3(0.1, 0.1, 0.1);
+glm::vec3 Renderer::AmbientColor = glm::vec3(0.5, 0.5, 0.5);
 
 void Renderer::init(GLsizei width, GLsizei height,char* filename)
 {
@@ -33,19 +34,27 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	CreateCameraInScene("MainCamera");
 	MainCamera = CurrentCamera;
 	Transform* CurCam_Trans = CurrentCamera->getComponent<Transform>();
-	CurCam_Trans->setPosition(glm::vec3(0, 15, 36.0));
-//	MainCamera->getComponent<Camera>()->setViewDir(glm::vec3(-1,0,0));
+	CurCam_Trans->setPosition(glm::vec3(-0.82, 47.41, 57.36));
+	MainCamera->getComponent<Camera>()->setViewDir(glm::vec3(0,-0.55,-0.834));
 
 	Light::P_Light_Mesh = ImportObj("light_bulb.obj");
 	Light::D_Light_Mesh = ImportObj("Directional_light.obj");
 
 	Object* Light1 = CreateLightInScene("Light1");
-	Light1->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 20.0, 3.0));
+	Light1->getComponent<Transform>()->setPosition(glm::vec3(-15.0, 20.0, -6.0));
+	Light1->getComponent<Transform>()->setRotation(glm::vec3(-134.0, -39.0, 0));
+	Light1->getComponent<Light>()->ReComputeLightDir();
 	Light1->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
+	Light1->getComponent<Light>()->changeType();
+	Light1->getComponent<Light>()->AddIntensity(-0.4);
 
 	Object* Light2 = CreateLightInScene("Light2");
-	Light2->getComponent<Transform>()->setPosition(glm::vec3(15.0, 15.0, 10.0));
+	Light2->getComponent<Transform>()->setPosition(glm::vec3(23.45, 21.52, -2.51));
+	Light2->getComponent<Transform>()->setRotation(glm::vec3(-39.5, 68.0, 0));
+	Light2->getComponent<Light>()->ReComputeLightDir();
 	Light2->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
+	Light2->getComponent<Light>()->changeType();
+	Light2->getComponent<Light>()->AddIntensity(-0.6);
 
 //	Object* Light3 = CreateLightInScene("Light3");
 //	Light3->getComponent<Transform>()->setPosition(glm::vec3(0.0, 15.0, 0.0));
@@ -59,32 +68,67 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 		return;
 	PutMeshInScene(mirror);
 	Transform* CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-	CurObj_Trans->setScale(glm::vec3(2.8, 5, 1));
-	CurObj_Trans->setPosition(glm::vec3(0, 0, 0));
+	CurObj_Trans->setScale(glm::vec3(7, 12, 1));
+	CurObj_Trans->setPosition(glm::vec3(0, 0, -30));
 	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-//	CurObj_Trans->setRotation(glm::vec3(0, 180, 0));
 	CurrentObject[0]->setRenderQueue(3000);
 	CurrentObject[0]->AddCustomComponent<Mirror>();
 	CurrentObject[0]->getCustomComponent<Mirror>()->Start();
 	Material* M_mirror = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	M_mirror->setAmbientFactor(glm::vec3());
 	MaterialArray.push_back(M_mirror);
 	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
 
-	Mesh *teapot = ImportObj("Assets\\teapot1.obj");
-	if (!teapot)
+	Mesh* Queen = ImportObj("Assets\\Queen.obj");
+	if (!Queen)
 		return;
-	PutMeshInScene(teapot);
+	PutMeshInScene(Queen);
 	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurObj_Trans->setPosition(glm::vec3(0, 0, 0));
-	CurObj_Trans->setScale(glm::vec3(0.65, 0.65, 0.65));
-	Material* teapotRFL = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
-	MaterialArray.push_back(teapotRFL);
-	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, teapotRFL);
+//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+	CurObj_Trans->setPosition(glm::vec3(0, 16.7, 0));
+//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
+	Material* Mat_Queen = new Material("M_Queen", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
+	Mat_Queen->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
+	Mat_Queen->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
+	Mat_Queen->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
+	MaterialArray.push_back(Mat_Queen);
+	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Queen);
+	CurrentObject[0]->AddCustomComponent<KeepRotating>();
 	//	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
 	//	CurrentObject->AddComponent<Light>();
 	//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
 	//	PushLightsInArray(CurrentObject->getComponent<Light>());
+	Mesh* Pulupulu = ImportObj("Assets\\Pulupulu.obj");
+	if (!Pulupulu)
+		return;
+	PutMeshInScene(Pulupulu);
+	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+	//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+	CurObj_Trans->setPosition(glm::vec3(-30, 0, -4));
+	//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
+	Material* Mat_Pulupulu = new Material("M_Pulu", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
+	Mat_Pulupulu->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
+	Mat_Pulupulu->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
+	Mat_Pulupulu->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
+	MaterialArray.push_back(Mat_Pulupulu);
+	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Pulupulu);
+	CurrentObject[0]->AddCustomComponent<KeepRotating>();
+
+	Mesh* Enemy = ImportObj("Assets\\Enemy.obj");
+	if (!Enemy)
+		return;
+	PutMeshInScene(Enemy);
+	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+	//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+	CurObj_Trans->setPosition(glm::vec3(30, 0, -3));
+	//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
+	Material* Mat_Enemy = new Material("M_Enemy", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
+	Mat_Enemy->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
+	Mat_Enemy->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
+	Mat_Enemy->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
+	MaterialArray.push_back(Mat_Enemy);
+	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Enemy);
+	CurrentObject[0]->AddCustomComponent<KeepRotating>();
 
 	ClearCurrentObject();
 }
@@ -153,6 +197,7 @@ void Renderer::RenderToScene()
 			{
 				for (auto Light_iter = CastShadowLights.begin(); Light_iter != CastShadowLights.end(); Light_iter++)
 				{
+					
 					(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
 					glEnable(GL_BLEND);
 					glBlendFunc(GL_ONE, GL_ONE);
@@ -185,6 +230,7 @@ void Renderer::RenderToScene()
 void Renderer::RenderToTexture(Object * Cam, FrameBuffer * FBO)
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO->id);
+	glViewport(0, 0, ScreenWidth, ScreenHeight);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
@@ -263,6 +309,25 @@ Mesh * Renderer::ImportObj(char * filename)
 
 	MeshArray.push_back(m);
 	return m;
+}
+
+void Renderer::ObjectUpdate()
+{
+	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
+	{
+		if ((*iter)->IsHided())
+			continue;
+		for (auto behavior_iter = (*iter)->CustomComponent_Map.begin(); behavior_iter != (*iter)->CustomComponent_Map.end(); ++behavior_iter)
+		{
+			behavior_iter->second->Update();
+		}
+	}
+}
+
+void Renderer::ScreenSizeUpdate(GLsizei width, GLsizei height)
+{
+	ScreenWidth = width;
+	ScreenHeight = height;
 }
 
 void Renderer::PutMeshInScene(Mesh* mesh)

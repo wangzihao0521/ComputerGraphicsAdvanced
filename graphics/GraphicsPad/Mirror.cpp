@@ -25,6 +25,7 @@ void Mirror::Start()
 
 void Mirror::Update()
 {
+	FBO->UpdateTexSize(Renderer::getInstance()->ScreenWidth, Renderer::getInstance()->ScreenHeight);
 }
 
 void Mirror::onWillRenderObject()

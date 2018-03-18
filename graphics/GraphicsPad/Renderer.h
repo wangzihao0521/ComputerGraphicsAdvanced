@@ -34,6 +34,8 @@ public:
 	void RenderToTexture(Object* Cam, FrameBuffer* FBO);
 	void ReCompileALLShader();
 	Mesh* ImportObj(char* filename);
+	void ObjectUpdate();
+	void ScreenSizeUpdate(GLsizei width, GLsizei height);
 
 	void PutMeshInScene(Mesh* mesh);
 	void CreateCameraInScene(std::string name);

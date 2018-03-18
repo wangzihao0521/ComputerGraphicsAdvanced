@@ -22,7 +22,7 @@ public:
 	static GLint count;
 
 	FrameBuffer() :
-		id(0), ColorTexture(nullptr), DepthTexture(nullptr) {}
+		id(0), ColorTexture(nullptr), DepthTexture(nullptr),DepthTexture_3D(nullptr) {}
 	~FrameBuffer()
 	{
 		if (ColorTexture)
@@ -38,5 +38,7 @@ public:
 	void PointLight_Shadow_Init(GLsizei width, GLsizei height);
 	void PointLight_Shadow_Change(GLsizei width, GLsizei height, GLint TexUnitId);
 	void DirectLight_Shadow_Change(GLsizei width, GLsizei height, GLint TexUnitId);
+
+	void UpdateTexSize(GLsizei width, GLsizei height);
 	
 };

@@ -17,7 +17,7 @@ void Mesh_Renderer::Render(Object * cam_obj,class Light* light, GLsizei screenwi
 		glBindVertexArray(mesh->getVArrayID());
 		(*iter)->ExecuteEveryPass(object->getComponent<class Transform>(), cam_obj, light, screenwidth, screenheight);
 	}
-	
+
 }
 
 void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)

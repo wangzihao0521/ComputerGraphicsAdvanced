@@ -190,5 +190,28 @@ void FrameBuffer::DirectLight_Shadow_Change(GLsizei width, GLsizei height, GLint
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthTexture->getTextureID(), 0);
 }
 
+void FrameBuffer::UpdateTexSize(GLsizei width, GLsizei height)
+{
+	if (ColorTexture)
+	{
+		glBindTexture(GL_TEXTURE_2D, ColorTexture->getTextureID());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	if (DepthTexture)
+	{
+		glBindTexture(GL_TEXTURE_2D, DepthTexture->getTextureID());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	}
+	if (DepthTexture_3D)
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, DepthTexture_3D->getTextureID());
+		for (int i = 0; i < 6; ++i)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		}
+	}
+
+}
+
 
 

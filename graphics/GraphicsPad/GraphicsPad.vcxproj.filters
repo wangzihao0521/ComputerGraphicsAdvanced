@@ -102,6 +102,9 @@
       <Filter>Managers</Filter>
     </ClInclude>
     <ClInclude Include="Shadow.h" />
+    <ClInclude Include="KeepRotating.h">
+      <Filter>UserScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MirrorVertexShader.glsl">
@@ -163,6 +166,12 @@
     </None>
     <None Include="Default\ShaderFile\ShadowCasterVertexShader.glsl">
       <Filter>ShaderFile\DefaultShaderFile</Filter>
+    </None>
+    <None Include="UserDefine\Queen_F.glsl">
+      <Filter>ShaderFile\UserShaderFile</Filter>
+    </None>
+    <None Include="UserDefine\Queen_V.glsl">
+      <Filter>ShaderFile\UserShaderFile</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

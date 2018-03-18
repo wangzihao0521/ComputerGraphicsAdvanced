@@ -22,7 +22,7 @@ void Shadow::SwitchToDirectional()
 	GLint OldTexUnitId = ShadowFBO->DepthTexture_3D->getTexUnitID();
 	ShadowFBO->DirectLight_Shadow_Change(width, height, OldTexUnitId);
 	cam_Shadow->setViewAngle(30);
-	cam_Shadow->setFarPlane(500);
+	cam_Shadow->setFarPlane(1000);
 }
 
 void Shadow::SwitchToPointLight()

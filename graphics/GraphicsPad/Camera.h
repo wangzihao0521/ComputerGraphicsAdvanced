@@ -20,7 +20,7 @@ public:
 		DLight_Shadow_ViewMatrix(glm::mat4()),
 		VirtualCamPos(glm::vec3()),
 		NearPlane(0.3),
-		FarPlane(100.0),
+		FarPlane(200.0),
 		Aspect(1.33),
 		ViewAngle(60.0),
 		LeftPlane(-20),

@@ -175,6 +175,7 @@
     <ClInclude Include="cyPoint.h" />
     <ClInclude Include="cyTriMesh.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="KeepRotating.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeGlWindow.h" />
@@ -219,6 +220,8 @@
     <None Include="Default\ShaderFile\StaticVertexShader.glsl" />
     <None Include="MirrorFragmentShader.glsl" />
     <None Include="MirrorVertexShader.glsl" />
+    <None Include="UserDefine\Queen_F.glsl" />
+    <None Include="UserDefine\Queen_V.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

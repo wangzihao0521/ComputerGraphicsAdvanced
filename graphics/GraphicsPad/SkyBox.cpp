@@ -27,12 +27,12 @@ void SkyBox::init()
 	vertices[5].normal = cyPoint3f(0.0, 0.0, 1.0);
 	vertices[5].uv = cyPoint3f(0.0, 1.0, 0.0);
 
-	cubemap = TextureManager::getInstance()->ImportTex3D("Default\\Texture\\cubemap_posx.png",
-		"Default\\Texture\\cubemap_negx.png",
-		"Default\\Texture\\cubemap_negy.png",
-		"Default\\Texture\\cubemap_posy.png",
-		"Default\\Texture\\cubemap_posz.png",
-		"Default\\Texture\\cubemap_negz.png"
+	cubemap = TextureManager::getInstance()->ImportTex3D("Default\\Texture\\sL.png",
+		"Default\\Texture\\sR.png",
+		"Default\\Texture\\sD.png",
+		"Default\\Texture\\sU.png",
+		"Default\\Texture\\sF.png",
+		"Default\\Texture\\sB.png"
 	);
 
 	glGenBuffers(1, &bufferID);

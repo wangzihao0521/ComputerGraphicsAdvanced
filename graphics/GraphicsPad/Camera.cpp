@@ -156,7 +156,7 @@ void Camera::UpdateProjectionMatrix()
 void Camera::UpdateDLight_Shadow_ViewMatrix(glm::vec3 light_dir, glm::vec3 camPos, glm::vec3 camViewDir)
 {
 	glm::vec3 focusPos = camPos + glm::vec3(camViewDir.x * 50, camViewDir.y * 50, camViewDir.z * 50);
-	VirtualCamPos = focusPos - glm::vec3(light_dir.x * 250, light_dir.y * 250, light_dir.z * 250);
+	VirtualCamPos = focusPos - glm::vec3(light_dir.x * 625, light_dir.y * 625, light_dir.z * 625);
 	float OffsetMax = 30.0;
 	if (light_dir.x > 0)
 		VirtualCamPos.x -= OffsetMax * (1 - glm::abs(light_dir.x));

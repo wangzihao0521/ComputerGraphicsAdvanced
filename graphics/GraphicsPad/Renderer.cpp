@@ -45,16 +45,16 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	Light1->getComponent<Transform>()->setRotation(glm::vec3(-134.0, -39.0, 0));
 	Light1->getComponent<Light>()->ReComputeLightDir();
 	Light1->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
-	Light1->getComponent<Light>()->changeType();
-	Light1->getComponent<Light>()->AddIntensity(-0.4);
+//	Light1->getComponent<Light>()->changeType();
+//	Light1->getComponent<Light>()->AddIntensity(-0.4);
 
-	Object* Light2 = CreateLightInScene("Light2");
+	/*Object* Light2 = CreateLightInScene("Light2");
 	Light2->getComponent<Transform>()->setPosition(glm::vec3(23.45, 21.52, -2.51));
 	Light2->getComponent<Transform>()->setRotation(glm::vec3(-39.5, 68.0, 0));
 	Light2->getComponent<Light>()->ReComputeLightDir();
 	Light2->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
 	Light2->getComponent<Light>()->changeType();
-	Light2->getComponent<Light>()->AddIntensity(-0.6);
+	Light2->getComponent<Light>()->AddIntensity(-0.6);*/
 
 //	Object* Light3 = CreateLightInScene("Light3");
 //	Light3->getComponent<Transform>()->setPosition(glm::vec3(0.0, 15.0, 0.0));
@@ -178,7 +178,7 @@ void Renderer::RenderToScene()
 		}
 		if (LightArray.empty())
 		{
-			(*iter)->Render(MainCamera, nullptr, ScreenWidth, ScreenHeight);
+			(*iter)->Render(MainCamera, nullptr);
 		}
 		else
 		{
@@ -187,7 +187,7 @@ void Renderer::RenderToScene()
 			{
 				for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
 				{
-					(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+					(*iter)->Render(MainCamera, (*Light_iter));
 					glEnable(GL_BLEND);
 					glBlendFunc(GL_ONE, GL_ONE);
 				}
@@ -198,7 +198,7 @@ void Renderer::RenderToScene()
 				for (auto Light_iter = CastShadowLights.begin(); Light_iter != CastShadowLights.end(); Light_iter++)
 				{
 					
-					(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+					(*iter)->Render(MainCamera, (*Light_iter));
 					glEnable(GL_BLEND);
 					glBlendFunc(GL_ONE, GL_ONE);
 				}
@@ -210,7 +210,7 @@ void Renderer::RenderToScene()
 				{
 					if (!(*Light_iter)->getShadowInfo()->Cast_Shadow)
 					{
-						(*iter)->Render(MainCamera, (*Light_iter), ScreenWidth, ScreenHeight);
+						(*iter)->Render(MainCamera, (*Light_iter));
 					}
 				}
 				glDisable(GL_BLEND);
@@ -240,7 +240,7 @@ void Renderer::RenderToTexture(Object * Cam, FrameBuffer * FBO)
 			continue;
 		for (auto Light_iter = LightArray.begin(); Light_iter != LightArray.end(); Light_iter++)
 		{
-			(*iter)->Render(Cam, (*Light_iter), ScreenWidth, ScreenHeight);
+			(*iter)->Render(Cam, (*Light_iter));
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
 		}
@@ -513,7 +513,7 @@ Object * Renderer::getObjectByScreenPos(glm::vec2 pos)
 		return ObjectArray[ObjectID - 1];
 	else
 	{
-		VisualTransformManager::getInstance()->getObjectById(ObjectID - ObjectArray.size());
+		return VisualTransformManager::getInstance()->getObjectById(ObjectID - ObjectArray.size());
 	}
 }
 

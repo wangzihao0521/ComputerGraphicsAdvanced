@@ -14,7 +14,7 @@ public:
 		type = Component::Type::Mesh_Renderer;
 	}
 	~Mesh_Renderer();
-	void Render(Object* cam_obj,class Light* light, GLsizei screenwidth, GLsizei screenheight);
+	void Render(Object* cam_obj,class Light* light);
 	void Fill_MT_Array(std::vector<Material*> * mat_array);
 	bool No_Materials() { return MaterialArray.empty(); }
 	void ReCompileAllMaterial();

@@ -43,7 +43,7 @@ public:
 	Material(std::string Materialname = "Material", char* Vshaderfilename = "Default\\ShaderFile\\DefaultVertexShader.glsl", char* Fshaderfilename = "Default\\ShaderFile\\DefaultFragmentShader.glsl");
 	Material(Mesh * M,cyTriMesh::Mtl & mat,char* path_name, int firstface, int facecount);
 	~Material();
-	void ExecuteEveryPass(Transform* transform, Object* cam,Light* light, GLsizei screenwidth, GLsizei screenheight);
+	void ExecuteEveryPass(Transform* transform, Object* cam,Light* light);
 	void ReCompileShaders();
 	void set_PathName(std::string path_name) { PathName = path_name; }
 	void set_Facecount(int i) { face_count = i; }
@@ -65,7 +65,7 @@ public:
 	static glm::vec3 AmbientColor;
 
 private:
-	void Add_Zihao_MVP(Pass* pass, Transform* transform,Object* cam, GLsizei screenwidth, GLsizei screenheight,Light* light);
+	void Add_Zihao_MVP(Pass* pass, Transform* transform,Object* cam,Light* light);
 	void Add_Light_Uniform(Pass* pass,Light* light);
 	void Add_Default_Parameter(Pass* pass);
 	void BindTex_Shader(GLint UniformLocation, int& Tex_Unit_number,Texture* map);

@@ -18,6 +18,7 @@ Light::Light(Object * obj) : Component(obj),shadow(nullptr),Intensity(1), LightC
 				glm::rotate(glm::mat4(), trans->getRotation().z, glm::vec3(0, 0, 1)) *
 				Dir_Light_Default_Dir;
 	TengentDir = Dir_Light_Default_Ten;
+	shadow = new Shadow(this);
 }
 
 glm::vec4 Light::getLightDirection()
@@ -28,6 +29,10 @@ glm::vec4 Light::getLightDirection()
 	else if (LightType == Directional)
 	{
 		return lightDir;
+	}
+	else
+	{
+		return glm::vec4();
 	}
 }
 
@@ -78,11 +83,11 @@ void Light::changeType()
 	}
 }
 
-void Light::Shadow_Init()
-{
-	if (!shadow)
-		shadow = new Shadow(object);
-}
+//void Light::Shadow_Init()
+//{
+//	if (!shadow)
+//		shadow = new Shadow(object);
+//}
 
 void Light::RenderShadowMap()
 {

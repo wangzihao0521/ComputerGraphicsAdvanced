@@ -25,7 +25,7 @@ public:
 	glm::vec3 getCurrentBoundBoxMin() const { return CurrentBoundBoxMin; }
 	glm::vec3 getCurrentBoundBoxMax() const { return CurrentBoundBoxMax; }
 
-	void Render(Object* cam_obj,Light* light, GLsizei screenwidth, GLsizei screenheight);
+	void Render(Object* cam_obj,Light* light);
 	void RenderShadow(Camera* cam);
 	bool Is_Renderable();
 	void CompileAllMaterial();
@@ -85,8 +85,8 @@ void Object::AddComponent()
 	if (Component_Map[type] == nullptr)
 	{
 		Component_Map[type] = p;
-		if (type == Component::Type::Light)
-			p->Shadow_Init();
+		/*if (type == Component::Type::Light)
+			p->Shadow_Init();*/
 		return;
 	}
 	else

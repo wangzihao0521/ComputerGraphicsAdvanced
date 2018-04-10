@@ -3,33 +3,25 @@
 class FrameBuffer;
 class Camera;
 class Object;
+class Light;
 
 class Shadow {
 
 public:
-	Shadow(Object* obj);
-	~Shadow()
-	{
-		if (ShadowFBO)
-		{
-			delete ShadowFBO;
-			ShadowFBO = nullptr;
-		}
-		if (cam_Shadow)
-		{
-			delete cam_Shadow;
-			cam_Shadow = nullptr;
-		}
-	}
+	Shadow(Light* light);
+	~Shadow();
 
+	void Init();
+	void _Release();
 	int getShadowmapUnitID();
 	void SwitchToDirectional();
 	void SwitchToPointLight();
-	inline void Cast_Shadow_Change() { Cast_Shadow = !Cast_Shadow; }
+	void Cast_Shadow_Change();
 
 	bool Cast_Shadow;
 	FrameBuffer* ShadowFBO;
 	Camera* cam_Shadow;
 	int width;
 	int height;
+	Light* light;
 };

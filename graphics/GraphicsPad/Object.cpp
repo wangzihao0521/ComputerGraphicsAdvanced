@@ -22,17 +22,17 @@ Object::~Object()
 	}
 }
 
-void Object::Render(Object* cam_obj, Light* light,GLsizei screenwidth, GLsizei screenheight)
+void Object::Render(Object* cam_obj, Light* light)
 {
 	if (Is_Renderable())
-		getComponent<Mesh_Renderer>()->Render(cam_obj,light, screenwidth, screenheight);
+		getComponent<Mesh_Renderer>()->Render(cam_obj,light);
 
 	else if (getComponent<Light>())
 	{
 		if (getComponent<Light>()->getLightType() == Light::Type::Point_Light)
-			StaticRenderer::getInstance()->Render(Light::P_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
+			StaticRenderer::getInstance()->Render(Light::P_Light_Mesh, getComponent<Transform>(), cam_obj);
 		else if (getComponent<Light>()->getLightType() == Light::Type::Directional)
-			StaticRenderer::getInstance()->Render(Light::D_Light_Mesh, getComponent<Transform>(), cam_obj, screenwidth, screenheight);
+			StaticRenderer::getInstance()->Render(Light::D_Light_Mesh, getComponent<Transform>(), cam_obj);
 	}
 }
 

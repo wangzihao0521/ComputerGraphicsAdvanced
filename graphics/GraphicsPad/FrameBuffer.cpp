@@ -1,9 +1,12 @@
 #include "FrameBuffer.h"
 GLint FrameBuffer::count = 0;
+std::vector<GLint> FrameBuffer::FreeTexUnit{};
 
 void FrameBuffer::init_ColorTexture(GLsizei width, GLsizei height, bool comparison)
 {
-	glActiveTexture(GL_TEXTURE30 - count);
+	GLint Valid_TexUnit = fetchValidTexUnit();
+	glActiveTexture(GL_TEXTURE0+Valid_TexUnit);
+	
 	Texture * tex = TextureManager::getInstance()->CreateEmptyTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureID());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
@@ -16,14 +19,14 @@ void FrameBuffer::init_ColorTexture(GLsizei width, GLsizei height, bool comparis
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	}
 
-	tex->setTexUnitId(30 - count);
+	tex->setTexUnitId(Valid_TexUnit);
 	ColorTexture = tex;
-	count += 1;
 }
 
 void FrameBuffer::init_DepthTexture(GLsizei width, GLsizei height, bool comparison)
 {
-	glActiveTexture(GL_TEXTURE29 - count);
+	GLint Valid_TexUnit = fetchValidTexUnit();
+	glActiveTexture(GL_TEXTURE0 + Valid_TexUnit);
 	Texture * tex = TextureManager::getInstance()->CreateEmptyTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureID());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
@@ -36,15 +39,14 @@ void FrameBuffer::init_DepthTexture(GLsizei width, GLsizei height, bool comparis
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	}
 
-	tex->setTexUnitId(30 - count);
+	tex->setTexUnitId(Valid_TexUnit);
 	DepthTexture = tex;
-	count += 1;
 }
 
 void FrameBuffer::init_DepthTexture(GLsizei width, GLsizei height, bool comparison, GLint TexUnitID)
 {
-	
-	glActiveTexture(GL_TEXTURE0 + TexUnitID-1);
+	GLint Valid_TexUnit = fetchValidTexUnit();
+	glActiveTexture(GL_TEXTURE0 + Valid_TexUnit);
 	Texture * tex = TextureManager::getInstance()->CreateEmptyTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureID());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
@@ -57,27 +59,28 @@ void FrameBuffer::init_DepthTexture(GLsizei width, GLsizei height, bool comparis
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	}
 
-	tex->setTexUnitId(TexUnitID-1);
+	tex->setTexUnitId(Valid_TexUnit);
 	DepthTexture = tex;
 }
 
 void FrameBuffer::init_SelectionColorTexture()
 {
-	glActiveTexture(GL_TEXTURE30 - count);
+	GLint Valid_TexUnit = fetchValidTexUnit();
+	glActiveTexture(GL_TEXTURE0 + Valid_TexUnit);
 	Texture * tex = TextureManager::getInstance()->CreateEmptyTexture();
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureID());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, 1, 1, 0, GL_RED_INTEGER, GL_INT, 0);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	tex->setTexUnitId(30 - count);
+	tex->setTexUnitId(Valid_TexUnit);
 	ColorTexture = tex;
-	count += 1;
 }
 
 void FrameBuffer::init_DepthTexture_3D(GLsizei width, GLsizei height, bool comparison)
 {
-	glActiveTexture(GL_TEXTURE30 - count);
+	GLint Valid_TexUnit = fetchValidTexUnit();
+	glActiveTexture(GL_TEXTURE0 + Valid_TexUnit);
 	Texture3D * tex = TextureManager::getInstance()->CreateEmptyTexture_3D();
 	glBindTexture(GL_TEXTURE_CUBE_MAP, tex->getTextureID());
 	for (int i = 0; i < 6; ++i)
@@ -95,14 +98,14 @@ void FrameBuffer::init_DepthTexture_3D(GLsizei width, GLsizei height, bool compa
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	}
-	tex->setTexUnitId(30 - count);
+	tex->setTexUnitId(Valid_TexUnit);
 	DepthTexture_3D = tex;
-	count += 1;
 }
 
 void FrameBuffer::init_DepthTexture_3D(GLsizei width, GLsizei height, bool comparison, GLint TexUnitID)
 {
-	glActiveTexture(GL_TEXTURE0 + TexUnitID+1);
+	GLint Valid_TexUnit = fetchValidTexUnit();
+	glActiveTexture(GL_TEXTURE0 + Valid_TexUnit);
 	Texture3D * tex = TextureManager::getInstance()->CreateEmptyTexture_3D();
 	glBindTexture(GL_TEXTURE_CUBE_MAP, tex->getTextureID());
 	for (int i = 0; i < 6; ++i)
@@ -120,26 +123,56 @@ void FrameBuffer::init_DepthTexture_3D(GLsizei width, GLsizei height, bool compa
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	}
-	tex->setTexUnitId(TexUnitID + 1);
+	tex->setTexUnitId(Valid_TexUnit);
 	DepthTexture_3D = tex;
 }
 
 void FrameBuffer::Delete_ColorTex()
 {
+	FreeTexUnit.push_back(ColorTexture->getTexUnitID());
 	TextureManager::getInstance()->DeleteTexture(ColorTexture);
 	ColorTexture = nullptr;
 }
 
 void FrameBuffer::Delete_DepthTex_3D()
 {
+	FreeTexUnit.push_back(DepthTexture_3D->getTexUnitID());
 	TextureManager::getInstance()->DeleteTexture3D(DepthTexture_3D);
 	DepthTexture_3D = nullptr;
 }
 
 void FrameBuffer::Delete_DepthTex()
 {
+	FreeTexUnit.push_back(DepthTexture->getTexUnitID());
 	TextureManager::getInstance()->DeleteTexture(DepthTexture);
 	DepthTexture = nullptr;
+}
+
+GLint FrameBuffer::fetchValidTexUnit()
+{
+	if (FreeTexUnit.empty())
+	{
+		count++;
+		return 31 - count;
+	}
+	else
+	{
+		GLint b = FreeTexUnit.back();
+		FreeTexUnit.pop_back();
+		return b;
+	}
+}
+
+GLint FrameBuffer::getEmptyTexUnit()
+{
+	if (FreeTexUnit.empty())
+	{
+		return 30 - count;
+	}
+	else
+	{ 
+		return FreeTexUnit.back();
+	}
 }
 
 void FrameBuffer::init(GLsizei width, GLsizei height)
@@ -168,26 +201,33 @@ void FrameBuffer::PointLight_Shadow_Init(GLsizei width, GLsizei height)
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	init_DepthTexture_3D(width, height,true);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, DepthTexture_3D->getTextureID(), 0);
-	count += 1;
+}
+
+void FrameBuffer::DirectLight_Shadow_Init(GLsizei width, GLsizei height)
+{
+	glGenFramebuffers(1, &id);
+	glBindFramebuffer(GL_FRAMEBUFFER, id);
+	init_DepthTexture(width, height, true);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthTexture->getTextureID(), 0);
 }
 
 void FrameBuffer::PointLight_Shadow_Change(GLsizei width, GLsizei height, GLint TexUnitId)
 {
-	Delete_DepthTex();
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	init_DepthTexture_3D(width, height, true, TexUnitId);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, DepthTexture_3D->getTextureID(), 0);
+	Delete_DepthTex();
 }
 
 void FrameBuffer::DirectLight_Shadow_Change(GLsizei width, GLsizei height, GLint TexUnitId)
-{
-	Delete_DepthTex_3D();
+{	
 //	glDeleteFramebuffers(1, &id);
 //	id = 0;
 //	glGenFramebuffers(1, &id);
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	init_DepthTexture(width, height, true, TexUnitId);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthTexture->getTextureID(), 0);
+	Delete_DepthTex_3D();
 }
 
 void FrameBuffer::UpdateTexSize(GLsizei width, GLsizei height)

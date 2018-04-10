@@ -14,11 +14,10 @@ void StaticRenderer::init()
 	pass_shadowcaster_ALL = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\ShadowCasterVertexShader.glsl", "Default\\ShaderFile\\ShadowCasterFragmentShader.glsl");
 }
 
-void StaticRenderer::Render(Mesh* mesh,Transform * transform, Object * cam, GLsizei screenwidth, GLsizei screenheight)
+void StaticRenderer::Render(Mesh* mesh,Transform * transform, Object * cam)
 {
 	glUseProgram(pass->getProgramID());
 	glBindVertexArray(mesh->getVArrayID());
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getIBufferID());
 
 	if (!cam)
 		return;
@@ -49,7 +48,6 @@ void StaticRenderer::Render_Shadowmap_PLight(Mesh * mesh, Transform * transform,
 {
 	glUseProgram(pass_shadowmap_PLight->getProgramID());
 	glBindVertexArray(mesh->getVArrayID());
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getIBufferID());
 
 	glm::mat4 CameraMatrix = cam_obj->getWorldToViewMatrix();
 
@@ -197,16 +195,18 @@ void StaticRenderer::RenderShadow(Mesh * mesh, Transform * transform, Camera * c
 	std::string FP = "farPlane";
 	std::string LI = "LightIntensity";
 	std::string LR = "LightRadius";
+	GLint EmptyTexUnit_2D = FrameBuffer::getEmptyTexUnit();
+	GLint EmptyTexUnit_3D = FrameBuffer::getEmptyTexUnit()-1;
 	for (int i = 0; i < 4; ++i)
 	{
 		if (i > Light_CastShadow.size() - 1)
 		{
 			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (SM2 + std::to_string(i)).c_str());
 			if (uniformLocation >= 0)
-				glUniform1i(uniformLocation, 30 - FrameBuffer::count);
+				glUniform1i(uniformLocation, EmptyTexUnit_2D);
 			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (SM3 + std::to_string(i)).c_str());
 			if (uniformLocation >= 0)
-				glUniform1i(uniformLocation, 29 - FrameBuffer::count);
+				glUniform1i(uniformLocation, EmptyTexUnit_3D);
 			continue;
 		
 		}
@@ -226,6 +226,9 @@ void StaticRenderer::RenderShadow(Mesh * mesh, Transform * transform, Camera * c
 			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (LP_WS + std::to_string(i)).c_str());
 			if (uniformLocation >= 0)
 				glUniform4fv(uniformLocation, 1, &LightPosition_WS[0]);
+			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (SM2 + std::to_string(i)).c_str());
+			if (uniformLocation >= 0)
+				glUniform1i(uniformLocation, EmptyTexUnit_2D);
 			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (SM3 + std::to_string(i)).c_str());
 			if (uniformLocation >= 0)
 				glUniform1i(uniformLocation, light->getShadowInfo()->getShadowmapUnitID());
@@ -246,6 +249,9 @@ void StaticRenderer::RenderShadow(Mesh * mesh, Transform * transform, Camera * c
 			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (SM2 + std::to_string(i)).c_str());
 			if (uniformLocation >= 0)
 				glUniform1i(uniformLocation, light->getShadowInfo()->getShadowmapUnitID());
+			uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (SM3 + std::to_string(i)).c_str());
+			if (uniformLocation >= 0)
+				glUniform1i(uniformLocation, EmptyTexUnit_3D);
 			
 		}
 		uniformLocation = glGetUniformLocation(pass_shadowcaster_ALL->getProgramID(), (FP + std::to_string(i)).c_str());

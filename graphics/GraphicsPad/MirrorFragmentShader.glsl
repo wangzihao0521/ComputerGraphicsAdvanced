@@ -56,6 +56,7 @@ void main()
 	vec3 DiffuseColor = mix(vec3(SkyBoxRFLColor),vec3(MirrorRFLColor),clamp(len*1000,0,1)) * DiffuseLight;
 	
 	pixelcolor = vec4(DiffuseColor + SpecularColor + AmbientColor,1.0);
+//	pixelcolor = vec4(DiffuseLight,1.0);
 //	pixelcolor = vec4(Light_Intensity,Light_Intensity,Light_Intensity,1.0);
 //	pixelcolor = vec4(VertexNormal_WS,1.0);
 //	pixelcolor = texture(DeFt_Mtl_map_Kd,uv);

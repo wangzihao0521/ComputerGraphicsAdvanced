@@ -14,6 +14,8 @@ protected:
 	void Delete_DepthTex_3D();
 	void Delete_DepthTex();
 
+	static std::vector<GLint> FreeTexUnit;
+
 public:
 	GLuint id;
 	Texture* ColorTexture;
@@ -31,13 +33,19 @@ public:
 			Delete_DepthTex();
 		if (DepthTexture_3D)
 			Delete_DepthTex_3D();
+		/*glDeleteFramebuffers(1, &id);
+		id = 0;*/
 	}
 
 	void init(GLsizei width, GLsizei height);
 	void SelectionInit();
 	void PointLight_Shadow_Init(GLsizei width, GLsizei height);
+	void DirectLight_Shadow_Init(GLsizei width, GLsizei height);
 	void PointLight_Shadow_Change(GLsizei width, GLsizei height, GLint TexUnitId);
 	void DirectLight_Shadow_Change(GLsizei width, GLsizei height, GLint TexUnitId);
+
+	static GLint fetchValidTexUnit();
+	static GLint getEmptyTexUnit();
 
 	void UpdateTexSize(GLsizei width, GLsizei height);
 	

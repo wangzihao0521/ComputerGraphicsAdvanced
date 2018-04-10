@@ -20,7 +20,7 @@ public:
 	}
 
 	void init();
-	void Render(Mesh* mesh,Transform* transform, Object * cam_obj, GLsizei screenwidth, GLsizei screenheight);
+	void Render(Mesh* mesh,Transform* transform, Object * cam_obj);
 	void Render_Shadowmap_PLight(Mesh* mesh, Transform* transform, Camera * cam_obj);
 	void Render_Shadowmap_DLight(Mesh* mesh, Transform* transform, Camera * cam_obj);
 	void RenderShadow(Mesh* mesh, Transform* transform, Camera * cam, Light * light);

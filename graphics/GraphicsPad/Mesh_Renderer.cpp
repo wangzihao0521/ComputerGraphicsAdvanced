@@ -7,9 +7,10 @@ Pass* Mesh_Renderer::AmbientPass = nullptr;
 Mesh_Renderer::~Mesh_Renderer()
 {
 	MaterialArray.clear();
+	delete AmbientPass;
 }
 
-void Mesh_Renderer::Render(Object * cam_obj,class Light* light, GLsizei screenwidth, GLsizei screenheight)
+void Mesh_Renderer::Render(Object * cam_obj,class Light* light)
 {
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.5);
@@ -17,7 +18,7 @@ void Mesh_Renderer::Render(Object * cam_obj,class Light* light, GLsizei screenwi
 	{
 		Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
 		glBindVertexArray(mesh->getVArrayID());
-		(*iter)->ExecuteEveryPass(object->getComponent<class Transform>(), cam_obj, light, screenwidth, screenheight);
+		(*iter)->ExecuteEveryPass(object->getComponent<class Transform>(), cam_obj, light);
 	}
 	glDisable(GL_ALPHA_TEST);
 }

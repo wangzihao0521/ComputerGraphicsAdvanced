@@ -94,12 +94,12 @@ Material::~Material()
 	PassArray.clear();
 }
 
-void Material::ExecuteEveryPass(Transform* transform, Object* cam,Light* light, GLsizei screenwidth, GLsizei screenheight)
+void Material::ExecuteEveryPass(Transform* transform, Object* cam,Light* light)
 {	
 	for (auto iter = PassArray.begin(); iter != PassArray.end(); iter++)
 	{
 		glUseProgram((*iter)->getProgramID());
-		Add_Zihao_MVP((*iter),transform,cam,screenwidth,screenheight,light);
+		Add_Zihao_MVP((*iter),transform,cam,light);
 		Add_Default_Parameter(*iter);
 		Add_Light_Uniform(*iter,light);
 		glDrawArrays(GL_TRIANGLES,first_face * 3, face_count * 3);
@@ -124,7 +124,7 @@ void Material::Bind_newmap_FBOTexUnit(Texture * tex)
 	newmap = tex;
 }
 
-void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, GLsizei screenwidth, GLsizei screenheight, Light* light)
+void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, Light* light)
 {
 	if (!cam)
 		return;

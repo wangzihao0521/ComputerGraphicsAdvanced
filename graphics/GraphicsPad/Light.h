@@ -30,7 +30,7 @@ public:
 	void mouse_RotateUpdate(const glm::vec2 & newMousePosition);
 	void ReComputeLightDir();
 	void changeType();
-	void Shadow_Init();
+//	void Shadow_Init();
 	void RenderShadowMap();
 	Shadow* getShadowInfo() const { return shadow; }
 	float getIntensity() const { return Intensity; }

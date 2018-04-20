@@ -9,7 +9,7 @@ void SelectionManager::init()
 {
 	SelectionPass = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\SelectionVertexShader.glsl", "Default\\ShaderFile\\SelectionFragmentShader.glsl");
 	OutlinePass = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\OutlineVertexShader.glsl", "Default\\ShaderFile\\OutlineFragmentShader.glsl");
-	SelectRadius = 5;
+	SelectRadius = 3;
 	SelectionMatrix = glm::mat4();
 	FBO = new FrameBuffer();
 	FBO->SelectionInit();

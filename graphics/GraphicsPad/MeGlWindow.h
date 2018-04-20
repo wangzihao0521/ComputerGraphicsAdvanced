@@ -12,7 +12,6 @@ protected:
 	void initializeGL();
 	void paintGL();
 	void TimerInit();
-	Renderer* renderer();
 
 	QTimer* Timer;
 	char* importFileName = nullptr;
@@ -31,6 +30,8 @@ public:
 	void mouseReleaseEvent(QMouseEvent* e);
 	void resizeEvent(QResizeEvent * e);
 	void tryImportFile(char* filename);
+	Renderer* renderer();
+
 
 private slots :
 	void updateGL();

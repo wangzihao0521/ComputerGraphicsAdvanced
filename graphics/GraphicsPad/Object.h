@@ -7,6 +7,7 @@
 #include <Light.h>
 #include <StaticRenderer.h>
 #include <typeindex>
+#include "ObjectLabel.h"
 
 
 class ZihaoBehavior;
@@ -27,11 +28,14 @@ public:
 
 	void Render(Object* cam_obj,Light* light);
 	void RenderShadow(Camera* cam);
+
+	std::string getName() { return name; }
+	ObjectLabel* getLabel() { return label; }
 	bool Is_Renderable();
 	void CompileAllMaterial();
 	void ComputeCurrentBoundBox();
-	void Unselect() { selected = false; }
-	void Select() { selected = true; }
+	void Unselect();
+	void Select();
 	bool IsSelected() { return selected; }
 
 	void UnHide() { hided = false; }
@@ -73,6 +77,7 @@ protected:
 	bool hided;
 	bool selected;
 	OBJ_TYPE Obj_type;
+	ObjectLabel* label;
 
 	GLint RenderQueue;
 };

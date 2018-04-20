@@ -6,6 +6,7 @@ void MeGlWindow::initializeGL()
 	glewInit();
 	TimerInit();
 	resize(960, 720);
+//	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	renderer()->init(width(),height(),importFileName);
 
 	PrefetchObject = nullptr;
@@ -249,11 +250,13 @@ void MeGlWindow::mouseReleaseEvent(QMouseEvent * e)
 			if (glm::length(mouseDelta) < 20.0f)
 			{
 				if (e->modifiers() && Qt::ControlModifier)
-					Renderer::getInstance()->AddCurrentObject(PrefetchObject);
+					//Renderer::getInstance()->AddCurrentObject(PrefetchObject);
+					PrefetchObject->Select();
 				else
 				{
 					Renderer::getInstance()->ClearCurrentObject();
-					Renderer::getInstance()->AddCurrentObject(PrefetchObject);
+//					Renderer::getInstance()->AddCurrentObject(PrefetchObject);
+					PrefetchObject->Select();
 				}
 			}
 		}		

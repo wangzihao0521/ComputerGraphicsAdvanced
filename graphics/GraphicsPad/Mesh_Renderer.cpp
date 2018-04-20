@@ -14,11 +14,16 @@ void Mesh_Renderer::Render(Object * cam_obj,class Light* light)
 {
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.5);
+	int i = 0;
 	for (auto iter = MaterialArray.begin(); iter != MaterialArray.end(); iter++)
 	{
 		Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
 		glBindVertexArray(mesh->getVArrayID());
-		(*iter)->ExecuteEveryPass(object->getComponent<class Transform>(), cam_obj, light);
+		cyTriMesh* geo = mesh->getGeometry();
+		int firstface = geo->GetMaterialFirstFace(i);
+		int facecount = geo->NM() == 0? geo->NF() : geo->GetMaterialFaceCount(i);
+		(*iter)->ExecuteEveryPass(firstface,facecount,object->getComponent<class Transform>(), cam_obj, light);
+		++i;
 	}
 	glDisable(GL_ALPHA_TEST);
 }
@@ -30,7 +35,6 @@ void Mesh_Renderer::Fill_MT_Array(std::vector<Material*> * mat_array)
 	{
 		Material* DefaultMaterial = new Material("DefaultMaterial", "Default\\ShaderFile\\DefaultVertexShader.glsl", "Default\\ShaderFile\\DefaultFragmentShader.glsl");
 		DefaultMaterial->BindMesh(mesh);
-		DefaultMaterial->set_Facecount(mesh->getGeometry()->NF());
 		MaterialArray.push_back(DefaultMaterial);
 		(*mat_array).push_back(DefaultMaterial);
 		return;
@@ -63,8 +67,6 @@ void Mesh_Renderer::ReCompileAllMaterial()
 void Mesh_Renderer::BindMaterial(GLint index, Material * mat)
 {
 	Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
-	mat->BindMesh(mesh);
-	mat->set_Facecount(mesh->getGeometry()->NF());
 	if (MaterialArray[index])
 	{
 		Material* oldmat = MaterialArray[index];

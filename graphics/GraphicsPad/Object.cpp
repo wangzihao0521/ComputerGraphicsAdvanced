@@ -1,11 +1,12 @@
 #include "Object.h"
 #include "Renderer.h"
+#include "SceneObjManager.h"
 
 const float Object::Movement_speed = 0.1f;
 const float Object::Rotation_speed = 0.5f;
 
 Object::Object(std::string objName) :
-	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000), selected(false),hided(false),Obj_type(NORMAL)
+	name(objName), CurrentBoundBoxMin(glm::vec3()), CurrentBoundBoxMax(glm::vec3()), RenderQueue(2000), selected(false),hided(false),Obj_type(NORMAL),label(new ObjectLabel(this))
 {
 	AddComponent<Transform>();
 }
@@ -79,6 +80,19 @@ void Object::ComputeCurrentBoundBox()
 	cyPoint3f max = getComponent<Mesh_Filter>()->getMesh()->getGeometry()->GetBoundMax();
 	CurrentBoundBoxMin = glm::vec3(Zihao_M2W * glm::vec4(min.x, min.y, min.z, 1) );
 	CurrentBoundBoxMax = glm::vec3(Zihao_M2W * glm::vec4(max.x, max.y, max.z, 1) );
+}
+
+void Object::Unselect()
+{
+	selected = false;
+	label->SetSelected(false);
+}
+
+void Object::Select()
+{
+	selected = true; 
+	Renderer::getInstance()->AddCurrentObject(this);
+	label->SetSelected(true);
 }
 
 bool Object::IsTransformationObject()

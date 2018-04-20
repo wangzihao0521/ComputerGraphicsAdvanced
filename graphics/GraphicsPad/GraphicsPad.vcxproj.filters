@@ -42,6 +42,13 @@
     <ClCompile Include="VisualTransformManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="MainWindow_moc.cpp" />
+    <ClCompile Include="FileWindow.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="SceneObjManager.cpp" />
+    <ClCompile Include="ObjectLabel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
@@ -105,6 +112,11 @@
     <ClInclude Include="KeepRotating.h">
       <Filter>UserScript</Filter>
     </ClInclude>
+    <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="FileWindow.h" />
+    <ClInclude Include="File.h" />
+    <ClInclude Include="SceneObjManager.h" />
+    <ClInclude Include="ObjectLabel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MirrorVertexShader.glsl">

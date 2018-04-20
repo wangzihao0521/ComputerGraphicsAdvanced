@@ -1,6 +1,7 @@
 #pragma once
 #include <GL\glew.h>
 #include <QtOpenGL\qglwidget>
+#include "File.h"
 
 class Texture {
 public:

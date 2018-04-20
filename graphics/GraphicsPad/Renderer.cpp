@@ -4,6 +4,8 @@
 #include "SelectionManager.h"
 #include "VisualTransformManager.h"
 #include "KeepRotating.h"
+#include "SceneObjManager.h"
+#include "FileWindow.h"
 
 #define MAX_SHADOW_LIGHT_AMOUNT 4
 
@@ -63,72 +65,72 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 
 	Material::AmbientColor = AmbientColor;
 
-	Mesh * mirror = ImportObj("Assets\\mirror.obj");
+	/*Mesh * mirror = ImportObj("Assets\\mirror.obj");
 	if (!mirror)
 		return;
-	PutMeshInScene(mirror);
-	Transform* CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-	CurObj_Trans->setScale(glm::vec3(7, 12, 1));
-	CurObj_Trans->setPosition(glm::vec3(0, 0, -30));
-	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurrentObject[0]->setRenderQueue(3000);
-	CurrentObject[0]->AddCustomComponent<Mirror>();
-	CurrentObject[0]->getCustomComponent<Mirror>()->Start();
-	Material* M_mirror = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
-	M_mirror->setAmbientFactor(glm::vec3());
-	MaterialArray.push_back(M_mirror);
-	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
-
-	Mesh* Queen = ImportObj("Assets\\Queen.obj");
-	if (!Queen)
-		return;
-	PutMeshInScene(Queen);
-	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurObj_Trans->setPosition(glm::vec3(0, 16.7, 0));
-//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
-	Material* Mat_Queen = new Material("M_Queen", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
-	Mat_Queen->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
-	Mat_Queen->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
-	Mat_Queen->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
-	MaterialArray.push_back(Mat_Queen);
-	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Queen);
-	CurrentObject[0]->AddCustomComponent<KeepRotating>();
-	//	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
-	//	CurrentObject->AddComponent<Light>();
-	//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
-	//	PushLightsInArray(CurrentObject->getComponent<Light>());
-	Mesh* Pulupulu = ImportObj("Assets\\Pulupulu.obj");
-	if (!Pulupulu)
-		return;
-	PutMeshInScene(Pulupulu);
-	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-	//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurObj_Trans->setPosition(glm::vec3(-30, 0, -4));
-	//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
-	Material* Mat_Pulupulu = new Material("M_Pulu", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
-	Mat_Pulupulu->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
-	Mat_Pulupulu->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
-	Mat_Pulupulu->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
-	MaterialArray.push_back(Mat_Pulupulu);
-	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Pulupulu);
-	CurrentObject[0]->AddCustomComponent<KeepRotating>();
-
-	Mesh* Enemy = ImportObj("Assets\\Enemy.obj");
-	if (!Enemy)
-		return;
-	PutMeshInScene(Enemy);
-	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-	//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	CurObj_Trans->setPosition(glm::vec3(30, 0, -3));
-	//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
-	Material* Mat_Enemy = new Material("M_Enemy", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
-	Mat_Enemy->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
-	Mat_Enemy->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
-	Mat_Enemy->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
-	MaterialArray.push_back(Mat_Enemy);
-	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Enemy);
-	CurrentObject[0]->AddCustomComponent<KeepRotating>();
+	PutMeshInScene(mirror);*/
+	//Transform* CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+	//CurObj_Trans->setScale(glm::vec3(7, 12, 1));
+	//CurObj_Trans->setPosition(glm::vec3(0, 0, -30));
+	//CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+	//CurrentObject[0]->setRenderQueue(3000);
+	//CurrentObject[0]->AddCustomComponent<Mirror>();
+	//CurrentObject[0]->getCustomComponent<Mirror>()->Start();
+	//Material* M_mirror = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	//M_mirror->setAmbientFactor(glm::vec3());
+	//MaterialArray.push_back(M_mirror);
+	//CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
+//
+//	Mesh* Queen = ImportObj("Assets\\Queen.obj");
+//	if (!Queen)
+//		return;
+//	PutMeshInScene(Queen);
+//	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+////	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+//	CurObj_Trans->setPosition(glm::vec3(0, 16.7, 0));
+////	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
+//	Material* Mat_Queen = new Material("M_Queen", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
+//	Mat_Queen->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
+//	Mat_Queen->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
+//	Mat_Queen->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\charpp.png"));
+//	MaterialArray.push_back(Mat_Queen);
+//	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Queen);
+//	CurrentObject[0]->AddCustomComponent<KeepRotating>();
+//	//	CurObj_Trans->setScale(glm::vec3(0.01, 0.01, 0.01));
+//	//	CurrentObject->AddComponent<Light>();
+//	//	CurrentObject->getComponent<Light>()->setType(Light::Type::Directional);
+//	//	PushLightsInArray(CurrentObject->getComponent<Light>());
+//	Mesh* Pulupulu = ImportObj("Assets\\Pulupulu.obj");
+//	if (!Pulupulu)
+//		return;
+//	PutMeshInScene(Pulupulu);
+//	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+//	//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+//	CurObj_Trans->setPosition(glm::vec3(-30, 0, -4));
+//	//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
+//	Material* Mat_Pulupulu = new Material("M_Pulu", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
+//	Mat_Pulupulu->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
+//	Mat_Pulupulu->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
+//	Mat_Pulupulu->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\PuluTex.png"));
+//	MaterialArray.push_back(Mat_Pulupulu);
+//	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Pulupulu);
+//	CurrentObject[0]->AddCustomComponent<KeepRotating>();
+//
+//	Mesh* Enemy = ImportObj("Assets\\Enemy.obj");
+//	if (!Enemy)
+//		return;
+//	PutMeshInScene(Enemy);
+//	CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+//	//	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+//	CurObj_Trans->setPosition(glm::vec3(30, 0, -3));
+//	//	CurObj_Trans->setScale(glm::vec3(0.05, 0.05, 0.05));
+//	Material* Mat_Enemy = new Material("M_Enemy", "UserDefine\\Queen_V.glsl", "UserDefine\\Queen_F.glsl");
+//	Mat_Enemy->BindDiffuseMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
+//	Mat_Enemy->BindAmbientMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
+//	Mat_Enemy->BindSpecularMap(TextureManager::getInstance()->ImportTex("Assets\\Enemy_diffuse.png"));
+//	MaterialArray.push_back(Mat_Enemy);
+//	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, Mat_Enemy);
+//	CurrentObject[0]->AddCustomComponent<KeepRotating>();
 
 	ClearCurrentObject();
 }
@@ -296,14 +298,17 @@ Mesh * Renderer::ImportObj(char * filename)
 	}
 	
 	Mesh* m = CompleteMeshWithGeo(geometry, (PathName) ? std::string(filename).substr(int(pathEnd - filename) + 1, std::string(filename).length()) : std::string(filename));
+//	FileWindow::getInstance()->AddFile(m);
 	
 	//Load Material
 	if (m->getGeometry()->NM())
 	{
 		for (int i = 0; i < m->getGeometry()->NM(); ++i)
 		{
-			Material* mtl = new Material(m,m->getGeometry()->M(i), PathName, m->getGeometry()->GetMaterialFirstFace(i), m->getGeometry()->GetMaterialFaceCount(i));
-			MaterialArray.push_back(mtl);		
+//			Material* mtl = new Material(m,m->getGeometry()->M(i), PathName, m->getGeometry()->GetMaterialFirstFace(i), m->getGeometry()->GetMaterialFaceCount(i));
+			Material* mtl = new Material(m, m->getGeometry()->M(i), PathName);
+			MaterialArray.push_back(mtl);
+			FileWindow::getInstance()->AddFile(mtl);
 		}
 	}
 
@@ -359,9 +364,11 @@ void Renderer::PutMeshInScene(Mesh* mesh)
 	mr->Fill_MT_Array(&MaterialArray);
 
 	ObjectArray.push_back(obj);
-	CurrentObject.clear();
+	ClearCurrentObject();
 	CurrentObject.push_back(obj);
 	RenderQueueDirty = true;
+
+	SceneObjManager::getInstance()->AddLabel(obj->getLabel());
 }
 
 void Renderer::CreateCameraInScene(std::string name)
@@ -432,33 +439,6 @@ void Renderer::AddCurrentObject(Object * obj)
 	if (!obj)
 		return;
 	CurrentObject.push_back(obj);
-	obj->Select();
-}
-
-void Renderer::SelectObjectByScreenPos(glm::vec2 pos)
-{
-	glm::vec2 ClipPos = glm::vec2(pos.x / ScreenWidth * 2 - 1, (1 - pos.y / ScreenHeight) * 2 - 1);
-	SelectionManager::getInstance()->UpdateSelectionMatrix(ScreenWidth, ScreenHeight, ClipPos);
-	glUseProgram(SelectionManager::getInstance()->getSelectionPass()->getProgramID());
-	glBindFramebuffer(GL_FRAMEBUFFER, SelectionManager::getInstance()->getFBO()->id);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-	GLint	i = 1;
-	for (auto iter = ObjectArray.begin(); iter != ObjectArray.end(); iter++)
-	{	
-		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, i);
-		++i;
-	}
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	GLint data = -1;
-	glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &data);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	if (data <= 0)
-	{
-		ClearCurrentObject();
-		return;
-	}
-	SelectObjectById(data);
 }
 
 void Renderer::AddCurObjectByScreenPos(glm::vec2 pos)
@@ -595,7 +575,7 @@ void Renderer::PushLightsInArray(Light * light)
 
 Mesh * Renderer::CompleteMeshWithGeo(cyTriMesh * geometry, std::string MS_Name)
 {
-	Mesh* m = new Mesh(geometry,MS_Name);
+	Mesh* m = new Mesh(geometry, MS_Name);
 	m->setVBufferID(bindandfillvertexbuffer(geometry));
 	m->setVArrayID(bindvertexarray(m->getVBufferID()));
 	return m;
@@ -676,7 +656,6 @@ void Renderer::RenderSelectionOutlineAndTransformationMesh()
 			continue;
 		SelectionManager::getInstance()->SelectionRender((*iter), MainCamera, ScreenWidth, ScreenHeight, 0);
 	}
-//	glDisable(GL_BLEND);
 	GLint id = 0;
 	glDisable(GL_DEPTH_TEST);
 	VisualTransformManager::getInstance()->Render(CurrentObject[0]->getComponent<Transform>()->getPosition(),id);

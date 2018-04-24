@@ -1,4 +1,5 @@
 #include "TextureManager.h"
+#include <string>
 
 TextureManager* TextureManager::tex_mng = nullptr;
 Texture* TextureManager::WHITE = nullptr;
@@ -42,7 +43,17 @@ Texture* TextureManager::ImportTex(std::string filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	Texture* Tex_obj = new Texture(filename, texture, TextureID);
+	char *PathName = nullptr;
+	const char* pathEnd = strrchr(filename.c_str(), '\\');
+	if (!pathEnd) pathEnd = strrchr(filename.c_str(), '/');
+	if (pathEnd) {
+		int n = int(pathEnd - filename.c_str()) + 1;
+		PathName = new char[n + 1];
+		strncpy(PathName, filename.c_str(), n);
+		PathName[n] = '\0';
+	}
+	std::string displayName = (PathName) ? filename.substr(int(pathEnd - filename.c_str()) + 1, filename.length()) : filename;
+	Texture* Tex_obj = new Texture(displayName, texture, TextureID, PathName);
 	TexArray.push_back(Tex_obj);
 	return Tex_obj;
 }

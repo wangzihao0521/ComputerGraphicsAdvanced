@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\GL\glew\include;$(ProjectDir)..\GL\Qt\include;$(ProjectDir)..\GL\glm;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\GL\glew\include;$(ProjectDir)..\GL\Qt\include;$(ProjectDir)..\GL\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,6 +105,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\GL\glew\include;$(ProjectDir)..\GL\Qt\include;$(ProjectDir)..\GL\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,7 +121,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\GL\glew\include;$(ProjectDir)..\GL\Qt\include;$(ProjectDir)..\GL\glm;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\GL\glew\include;$(ProjectDir)..\GL\Qt\include;$(ProjectDir)..\GL\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\GL\glew\include;$(ProjectDir)..\GL\Qt\include;$(ProjectDir)..\GL\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,12 +159,17 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="MainWindow_moc.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MatPropertiesWidget.cpp" />
+    <ClCompile Include="MatPropertiesWidget_moc.cpp" />
     <ClCompile Include="MeGlWindow.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshPropertiesWidget.cpp" />
     <ClCompile Include="Mesh_Renderer.cpp" />
     <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectLabel.cpp" />
+    <ClCompile Include="ObjPropertiesManager.cpp" />
+    <ClCompile Include="ObjPropertiesWidget.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SceneObjManager.cpp" />
@@ -171,6 +178,8 @@
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="StaticRenderer.cpp" />
+    <ClCompile Include="TexPropertiesWidget.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="VisualTransformManager.cpp" />
@@ -188,13 +197,17 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MatPropertiesWidget.h" />
     <ClInclude Include="MeGlWindow.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshFilter.h" />
+    <ClInclude Include="MeshPropertiesWidget.h" />
     <ClInclude Include="Mesh_Renderer.h" />
     <ClInclude Include="Mirror.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectLabel.h" />
+    <ClInclude Include="ObjPropertiesManager.h" />
+    <ClInclude Include="ObjPropertiesWidget.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SceneObjManager.h" />
@@ -203,6 +216,7 @@
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="StaticRenderer.h" />
+    <ClInclude Include="TexPropertiesWidget.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Texture3D.h" />
     <ClInclude Include="TextureManager.h" />

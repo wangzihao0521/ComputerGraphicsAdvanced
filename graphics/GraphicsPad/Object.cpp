@@ -21,6 +21,7 @@ Object::~Object()
 	{
 		delete iter->second;
 	}
+	delete label;
 }
 
 void Object::Render(Object* cam_obj, Light* light)

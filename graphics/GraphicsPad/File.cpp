@@ -1,9 +1,10 @@
 #include "File.h"
 #include "FileWindow.h"
-#include "QtGui\qmouseevent"
+#include <QtGui\qmouseevent>
 #include "MainWindow.h"
+#include "ObjPropertiesManager.h"
 
-File::File(QIcon& Icon, std::string fname): QWidget(FileWindow::getInstance())
+File::File(QIcon& Icon, std::string fname): QWidget(FileWindow::getInstance()),MouseHolder(false)
 {
 	icon = Icon;
 	filename = fname;
@@ -59,14 +60,38 @@ void File::leaveEvent(QEvent * e)
 
 void File::mousePressEvent(QMouseEvent * e)
 {
-	FileWindow::getInstance()->_UnSelectAll();
-	_Select();
+	if (!MouseHolder)
+	{
+		if (e->button() == Qt::LeftButton)
+		{
+			clickPos = e->pos();
+			FileWindow::getInstance()->_UnSelectAll();
+			_Select();
+		}
+	}
+	MouseHolder = true;
 }
 
 void File::mouseReleaseEvent(QMouseEvent * e)
 {
 	if (MainWindow::getInstance()->childAt(e->globalPos()) == MainWindow::getInstance()->getScene())
 	{
-		this->_PutInScene(e);
+		if (e->button() == Qt::LeftButton)
+		{
+			this->_PutInScene(e);
+		}
 	}
+	if (ObjPropertiesManager::getInstance()->isAncestorOf(MainWindow::getInstance()->childAt(e->globalPos())))
+	{
+		if (e->button() == Qt::LeftButton)
+		{
+			this->_PutInObjProperties(e);
+		}
+	}
+	if ((e->pos() - clickPos).manhattanLength() < 10)
+	{
+		ObjPropertiesManager::getInstance()->Refresh(this);
+	}
+	MouseHolder = false;
+	clickPos = QPoint();
 }

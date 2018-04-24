@@ -2,8 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Mainer.cpp" />
-    <ClCompile Include="MeGlWindow.cpp" />
-    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="Camera.cpp">
@@ -28,7 +26,6 @@
       <Filter>UserScript</Filter>
     </ClCompile>
     <ClCompile Include="FrameBuffer.cpp" />
-    <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="SkyBox.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
@@ -42,20 +39,60 @@
     <ClCompile Include="VisualTransformManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="MainWindow_moc.cpp" />
-    <ClCompile Include="FileWindow.cpp" />
-    <ClCompile Include="File.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="SceneObjManager.cpp" />
-    <ClCompile Include="ObjectLabel.cpp" />
+    <ClCompile Include="File.cpp">
+      <Filter>UI\FileWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="FileWindow.cpp">
+      <Filter>UI\FileWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>UI\MainWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow_moc.cpp">
+      <Filter>UI\MainWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MeGlWindow.cpp">
+      <Filter>UI\SceneWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLabel.cpp">
+      <Filter>UI\SceneObjManagerWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObjManager.cpp">
+      <Filter>UI\SceneObjManagerWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjPropertiesManager.cpp">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshPropertiesWidget.cpp">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MatPropertiesWidget.cpp">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="MatPropertiesWidget_moc.cpp">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture3D.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="TexPropertiesWidget.cpp">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjPropertiesWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MeGlWindow.h" />
     <ClInclude Include="cyCore.h" />
     <ClInclude Include="cyPoint.h" />
     <ClInclude Include="cyTriMesh.h" />
-    <ClInclude Include="Material.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="Component\Component.h">
@@ -70,7 +107,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Component\SubComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Mesh_Renderer.h">
       <Filter>Component\SubComponent</Filter>
     </ClInclude>
@@ -86,7 +122,6 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex_data.h" />
     <ClInclude Include="Mirror.h">
       <Filter>UserScript</Filter>
@@ -95,7 +130,6 @@
     <ClInclude Include="ZihaoBehavior.h">
       <Filter>Component\SubComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Texture3D.h" />
     <ClInclude Include="SkyBox.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -112,11 +146,51 @@
     <ClInclude Include="KeepRotating.h">
       <Filter>UserScript</Filter>
     </ClInclude>
-    <ClInclude Include="MainWindow.h" />
-    <ClInclude Include="FileWindow.h" />
-    <ClInclude Include="File.h" />
-    <ClInclude Include="SceneObjManager.h" />
-    <ClInclude Include="ObjectLabel.h" />
+    <ClInclude Include="File.h">
+      <Filter>UI\FileWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="FileWindow.h">
+      <Filter>UI\FileWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>UI\MainWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="MeGlWindow.h">
+      <Filter>UI\SceneWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLabel.h">
+      <Filter>UI\SceneObjManagerWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObjManager.h">
+      <Filter>UI\SceneObjManagerWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjPropertiesManager.h">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshPropertiesWidget.h">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="MatPropertiesWidget.h">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="TexPropertiesWidget.h">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture3D.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjPropertiesWidget.h">
+      <Filter>UI\ObjPropertiesWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MirrorVertexShader.glsl">
@@ -207,6 +281,27 @@
     </Filter>
     <Filter Include="ShaderFile\DefaultShaderFile">
       <UniqueIdentifier>{8f671105-2c4b-432b-9a4c-0c17ee61c58f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{5eaac18d-6458-4113-acaa-a44623e63376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainWindow">
+      <UniqueIdentifier>{b4e3ca9a-9f2e-48e0-87a5-354e53f10837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\FileWindow">
+      <UniqueIdentifier>{8f6a2598-5ae6-4591-9149-06d7468ba4cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\SceneWindow">
+      <UniqueIdentifier>{a68bed24-7dc7-48fe-8d4f-89421feb49be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\SceneObjManagerWindow">
+      <UniqueIdentifier>{adf70d1d-e3d1-45fb-b83e-fd80a9218330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\ObjPropertiesWindow">
+      <UniqueIdentifier>{9e3c43d2-4e8e-4a45-8659-ac857b2d2d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{8e61797e-e624-4cbd-9ef0-b48fafa054ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

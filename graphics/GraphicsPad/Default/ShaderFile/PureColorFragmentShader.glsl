@@ -8,5 +8,6 @@ uniform float Alpha;
 void main()
 {
 	pixelcolor = vec4(PureColor,Alpha);
+//	pixelcolor = vec4(1,1,1,1);
 }
 

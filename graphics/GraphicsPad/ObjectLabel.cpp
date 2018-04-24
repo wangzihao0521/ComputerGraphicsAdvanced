@@ -46,5 +46,6 @@ void ObjectLabel::SetSelected(bool b)
 
 void ObjectLabel::mousePressEvent(QMouseEvent * e)
 {
+	SceneObjManager::getInstance()->_UnSelectAll();
 	_Select();
 }

@@ -3,11 +3,13 @@
 #include "FrameBuffer.h"
 #include "MainWindow.h"
 #include "Renderer.h"
+#include "ObjPropertiesManager.h"
+#include "FileWindow.h"
 
 glm::vec3 Material::AmbientColor = glm::vec3();
 
 Material::Material(std::string Materialname, char * Vshaderfilename, char * Fshaderfilename):
-	File(QIcon("Assets\\brick.png"), Materialname), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), newmap(nullptr)
+	File(QIcon("Assets\\MatIcon.png"), Materialname), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), newmap(nullptr)
 {
 	Ka[0] = Ka[1] = Ka[2] = 1;
 	Kd[0] = Kd[1] = Kd[2] = 1;
@@ -31,50 +33,8 @@ Material::Material(std::string Materialname, char * Vshaderfilename, char * Fsha
 	}
 }
 
-Material::Material(Mesh* M,cyTriMesh::Mtl & mat, char* path_name, int firstface, int facecount):
-	File(QIcon("Assets\\brick.png"), std::string(mat.name)), PathName(path_name), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr),newmap(nullptr)
-{
-	for (int i = 0; i < 3; ++i)
-	{
-		Ka[i] = mat.Ka[i];
-	}
-	for (int i = 0; i < 3; ++i)
-	{
-		Kd[i] = mat.Kd[i];
-	}
-	for (int i = 0; i < 3; ++i)
-	{
-		Ks[i] = mat.Ks[i];
-	}
-	for (int i = 0; i < 3; ++i)
-	{
-		Tf[i] = mat.Tf[i];
-	}
-	Ns = mat.Ns;
-	Ni = mat.Ni;
-	illum = mat.illum;
-	if (mat.map_Ka)
-		map_Ka = TextureManager::getInstance()->ImportTex((PathName+std::string(mat.map_Ka.data)).c_str());
-	if (mat.map_Kd)
-		map_Kd = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Kd.data)).c_str());
-	if (mat.map_Ks)
-		map_Ks = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Ks.data)).c_str());
-	if (mat.map_Ns)
-		map_Ns = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Ns.data)).c_str());
-	if (mat.map_d)
-		map_d = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_d.data)).c_str());
-	if (mat.map_bump)
-		map_bump = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_bump.data)).c_str());
-	if (mat.map_disp)	
-		map_disp = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_disp.data)).c_str());
-	mesh = M;
-
-	Pass * p = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\DefaultVertexShader.glsl", "Default\\ShaderFile\\DefaultFragmentShader.glsl");
-	PassArray.push_back(p);
-}
-
 Material::Material(Mesh * M, cyTriMesh::Mtl & mat, char * path_name):
-	File(QIcon("Assets\\brick.png"), std::string(mat.name)), PathName(path_name), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), newmap(nullptr)
+	File(QIcon("Assets\\MatIcon.png"), std::string(mat.name)), PathName(path_name), map_Ka(nullptr), map_Kd(nullptr), map_Ks(nullptr), map_Ns(nullptr), map_d(nullptr), map_bump(nullptr), map_disp(nullptr), newmap(nullptr)
 {
 		for (int i = 0; i < 3; ++i)
 		{
@@ -96,19 +56,40 @@ Material::Material(Mesh * M, cyTriMesh::Mtl & mat, char * path_name):
 		Ni = mat.Ni;
 		illum = mat.illum;
 		if (mat.map_Ka)
+		{
 			map_Ka = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Ka.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_Ka);
+		}
 		if (mat.map_Kd)
+		{
 			map_Kd = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Kd.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_Kd);
+		}
 		if (mat.map_Ks)
+		{
 			map_Ks = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Ks.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_Ks);
+		}
 		if (mat.map_Ns)
+		{
 			map_Ns = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_Ns.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_Ns);
+		}
 		if (mat.map_d)
+		{
 			map_d = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_d.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_d);
+		}
 		if (mat.map_bump)
+		{
 			map_bump = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_bump.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_bump);
+		}
 		if (mat.map_disp)
+		{
 			map_disp = TextureManager::getInstance()->ImportTex((PathName + std::string(mat.map_disp.data)).c_str());
+			FileWindow::getInstance()->AddFile(map_disp);
+		}
 		mesh = M;
 
 		Pass * p = ShaderCompiler::getInstance()->Compile("Default\\ShaderFile\\DefaultVertexShader.glsl", "Default\\ShaderFile\\DefaultFragmentShader.glsl");
@@ -151,7 +132,7 @@ Material::~Material()
 	_ReleaseTex(map_d);
 	_ReleaseTex(map_Ns);
 	_ReleaseTex(map_disp);
-	_ReleaseTex(newmap);
+//	_ReleaseTex(newmap);
 	mesh = nullptr;
 	for (auto iter = PassArray.begin(); iter != PassArray.end(); ++iter)
 	{
@@ -203,6 +184,15 @@ void Material::_PutInScene(QMouseEvent* e)
 	if (!msh_renderer)
 		return;
 	msh_renderer->BindMaterial(0,this);
+}
+
+void Material::_PutInObjProperties(QMouseEvent * e)
+{
+}
+
+void Material::_DisplayProperties()
+{
+	ObjPropertiesManager::getInstance()->DisplayMaterial(this);
 }
 
 void Material::Add_Zihao_MVP(Pass* pass,Transform* transform, Object* cam, Light* light)
@@ -363,7 +353,7 @@ void Material::FeedShader_tex(GLint UniformLocation, int & Tex_Unit_number, Text
 	
 }
 
-void Material::_ReleaseTex(Texture*  & tex)
+void Material::_ReleaseTex(Texture*   tex)
 {
 	if (tex)
 	{

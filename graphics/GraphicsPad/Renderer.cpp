@@ -14,7 +14,7 @@ Mesh* Light::D_Light_Mesh = nullptr;
 Mesh* Light::P_Light_Mesh = nullptr;
 Object* Renderer::CurrentCamera = nullptr;
 Object* Renderer::MainCamera = nullptr;
-glm::vec3 Renderer::AmbientColor = glm::vec3(0.5, 0.5, 0.5);
+glm::vec3 Renderer::AmbientColor = glm::vec3(0.2, 0.2, 0.2);
 
 void Renderer::init(GLsizei width, GLsizei height,char* filename)
 {
@@ -47,7 +47,7 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 	Light1->getComponent<Transform>()->setRotation(glm::vec3(-134.0, -39.0, 0));
 	Light1->getComponent<Light>()->ReComputeLightDir();
 	Light1->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
-//	Light1->getComponent<Light>()->changeType();
+	Light1->getComponent<Light>()->changeType();
 //	Light1->getComponent<Light>()->AddIntensity(-0.4);
 
 	/*Object* Light2 = CreateLightInScene("Light2");
@@ -65,21 +65,23 @@ void Renderer::init(GLsizei width, GLsizei height,char* filename)
 
 	Material::AmbientColor = AmbientColor;
 
-	/*Mesh * mirror = ImportObj("Assets\\mirror.obj");
+	Mesh * mirror = ImportObj("Assets\\mirror.obj");
+	FileWindow::getInstance()->AddFile(mirror);
 	if (!mirror)
 		return;
-	PutMeshInScene(mirror);*/
-	//Transform* CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
-	//CurObj_Trans->setScale(glm::vec3(7, 12, 1));
-	//CurObj_Trans->setPosition(glm::vec3(0, 0, -30));
-	//CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
-	//CurrentObject[0]->setRenderQueue(3000);
-	//CurrentObject[0]->AddCustomComponent<Mirror>();
-	//CurrentObject[0]->getCustomComponent<Mirror>()->Start();
-	//Material* M_mirror = new Material("M_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
-	//M_mirror->setAmbientFactor(glm::vec3());
-	//MaterialArray.push_back(M_mirror);
-	//CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
+	PutMeshInScene(mirror);
+	Transform* CurObj_Trans = CurrentObject[0]->getComponent<Transform>();
+	CurObj_Trans->setScale(glm::vec3(7, 12, 1));
+	CurObj_Trans->setPosition(glm::vec3(0, -20, -30));
+	CurObj_Trans->setRotation(glm::vec3(-90, 0, 0));
+	CurrentObject[0]->setRenderQueue(3000);
+	CurrentObject[0]->AddCustomComponent<Mirror>();
+	CurrentObject[0]->getCustomComponent<Mirror>()->Start();
+	Material* M_mirror = new Material("MT_Mirror", "MirrorVertexShader.glsl", "MirrorFragmentShader.glsl");
+	FileWindow::getInstance()->AddFile(M_mirror);
+	M_mirror->setAmbientFactor(glm::vec3());
+	MaterialArray.push_back(M_mirror);
+	CurrentObject[0]->getComponent<Mesh_Renderer>()->BindMaterial(0, M_mirror);
 //
 //	Mesh* Queen = ImportObj("Assets\\Queen.obj");
 //	if (!Queen)
@@ -385,6 +387,9 @@ Object* Renderer::CreateLightInScene(std::string name)
 	obj->AddComponent<Light>();
 	ObjectArray.push_back(obj);
 	PushLightsInArray(obj->getComponent<Light>());
+	ClearCurrentObject();
+	CurrentObject.push_back(obj);
+	SceneObjManager::getInstance()->AddLabel(obj->getLabel());
 	return obj;
 }
 

@@ -54,22 +54,30 @@ int Shadow::getShadowmapUnitID()
 		return ShadowFBO->DepthTexture_3D->getTexUnitID();
 	else if (ShadowFBO->DepthTexture)
 		return ShadowFBO->DepthTexture->getTexUnitID();
+	else
+		return -1;
 }
 
 void Shadow::SwitchToDirectional()
 {
-	GLint OldTexUnitId = ShadowFBO->DepthTexture_3D->getTexUnitID();
-	ShadowFBO->DirectLight_Shadow_Change(width, height, OldTexUnitId);
-	cam_Shadow->setViewAngle(30);
-	cam_Shadow->setFarPlane(1000);
+	if (Cast_Shadow)
+	{
+		GLint OldTexUnitId = ShadowFBO->DepthTexture_3D->getTexUnitID();
+		ShadowFBO->DirectLight_Shadow_Change(width, height, OldTexUnitId);
+		cam_Shadow->setViewAngle(30);
+		cam_Shadow->setFarPlane(1000);
+	}
 }
 
 void Shadow::SwitchToPointLight()
 {
-	GLint OldTexUnitId = ShadowFBO->DepthTexture->getTexUnitID();
-	ShadowFBO->PointLight_Shadow_Change(width, height, OldTexUnitId);
-	cam_Shadow->setViewAngle(90);
-	cam_Shadow->setFarPlane(100);
+	if (Cast_Shadow)
+	{
+		GLint OldTexUnitId = ShadowFBO->DepthTexture->getTexUnitID();
+		ShadowFBO->PointLight_Shadow_Change(width, height, OldTexUnitId);
+		cam_Shadow->setViewAngle(90);
+		cam_Shadow->setFarPlane(100);
+	}
 }
 
 void Shadow::Cast_Shadow_Change()

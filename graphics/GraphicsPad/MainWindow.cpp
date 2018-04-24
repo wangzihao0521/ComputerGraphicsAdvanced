@@ -74,11 +74,15 @@ MeGlWindow * MainWindow::getScene()
 
 void MainWindow::CreatePointLight()
 {
-
+	Object* obj = GLWindow->renderer()->CreateLightInScene();
+	obj->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
 }
 
 void MainWindow::CreateDirectionalLight()
 {
+	Object* obj = GLWindow->renderer()->CreateLightInScene();
+	obj->getComponent<Light>()->getShadowInfo()->Cast_Shadow_Change();
+	obj->getComponent<Light>()->changeType();
 }
 
 void MainWindow::CreateActions()
@@ -140,7 +144,10 @@ void MainWindow::CreateSceneObjManagerGroupBox()
 void MainWindow::CreateObjectPropertiesGroupBox()
 {
 	ObjectPropertiesGroupBox = new QGroupBox(tr("Object Properties"));
+	ObjProperties_Window = new ObjPropertiesManager;
+	ObjProperties_Window->show();
 	QVBoxLayout* ObjectPropertiesLayout = new QVBoxLayout;
+	ObjectPropertiesLayout->addWidget(ObjProperties_Window);
 	ObjectPropertiesGroupBox->setLayout(ObjectPropertiesLayout);
 
 }

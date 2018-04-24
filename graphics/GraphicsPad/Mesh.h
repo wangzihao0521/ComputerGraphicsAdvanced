@@ -13,9 +13,11 @@ protected:
 	cyTriMesh* geometry;
 
 	void _PutInScene(QMouseEvent* e);
+	void _DisplayProperties();
+	void _PutInObjProperties(QMouseEvent* e);
 public:
 	Mesh(cyTriMesh* geo = nullptr, std::string Name = "Mesh"):
-		File(QIcon("Assets\\yoda-eye.png"),Name),VertexBufferID(0),IndicesBufferID(0), VertexArrayID(0),geometry(geo){}
+		File(QIcon("Assets\\MeshIcon.png"),Name),VertexBufferID(0),IndicesBufferID(0), VertexArrayID(0),geometry(geo){}
 
 	GLint getVBufferID() const { return VertexBufferID; }
 	GLint getIBufferID() const { return IndicesBufferID; }

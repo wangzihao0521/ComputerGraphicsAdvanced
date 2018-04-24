@@ -14,6 +14,8 @@ public:
 	void _Select();
 	void _UnSelect();
 
+	virtual void _DisplayProperties() = 0;
+
 protected:
 	QIcon icon;
 	std::string filename;
@@ -26,5 +28,11 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* e);
 
 	virtual void _PutInScene(QMouseEvent* e) = 0;
+	virtual void _PutInObjProperties(QMouseEvent* e) = 0;
+
+private:
+	bool MouseHolder;
+	QPoint clickPos;
+	
 	
 };

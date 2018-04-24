@@ -19,14 +19,14 @@ public:
 		projection_Mode(Perspective),
 		DLight_Shadow_ViewMatrix(glm::mat4()),
 		VirtualCamPos(glm::vec3()),
-		NearPlane(0.3),
-		FarPlane(200.0),
-		Aspect(1.33),
-		ViewAngle(60.0),
-		LeftPlane(-20),
-		RightPlane(20),
-		TopPlane(-20),
-		BotPlane(20)
+		NearPlane(0.3f),
+		FarPlane(200.0f),
+		Aspect(1.33f),
+		ViewAngle(60.0f),
+		LeftPlane(-20.0f),
+		RightPlane(20.0f),
+		TopPlane(-20.0f),
+		BotPlane(20.0f)
 	{
 		type = Component::Type::Camera;
 		UpdateProjectionMatrix();

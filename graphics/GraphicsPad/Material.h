@@ -37,18 +37,28 @@ protected:
 
 	std::vector<Pass*> PassArray;
 
+	void _PutInScene(QMouseEvent* e);
+	void _PutInObjProperties(QMouseEvent* e);
+	void _DisplayProperties();
 	
 public:
 	Material(std::string Materialname = "Material", char* Vshaderfilename = "Default\\ShaderFile\\DefaultVertexShader.glsl", char* Fshaderfilename = "Default\\ShaderFile\\DefaultFragmentShader.glsl");
-	Material(Mesh * M,cyTriMesh::Mtl & mat,char* path_name, int firstface, int facecount);
 	Material(Mesh * M, cyTriMesh::Mtl & mat, char* path_name);
 	Material(const Material& mat);
+
+	friend class MatPropertiesWidget;
+
 	~Material();
 	void ExecuteEveryPass(int firstface, int facecount,Transform* transform, Object* cam,Light* light);
 	void ReCompileShaders();
 	void set_PathName(std::string path_name) { PathName = path_name; }
+	void set_Ka(float a, float b, float c) { Ka[0] = a; Ka[1] = b; Ka[2] = c;}
+	void set_Kd(float a, float b, float c) { Kd[0] = a; Kd[1] = b; Kd[2] = c;}
+	void set_Ks(float a, float b, float c) { Ks[0] = a; Ks[1] = b; Ks[2] = c; }
+	void set_Ns(float a) { Ns = a; }
 	void BindMesh(Mesh* msh) { mesh = msh; }
 	Mesh* getMesh() const { return mesh; }
+	std::string	getName() const { return filename; }
 	void BindDiffuseMap(Texture* tex) { map_Kd = tex; }
 	void BindAmbientMap(Texture* tex) { map_Ka = tex; }
 	void BindSpecularMap(Texture* tex) { map_Ks = tex; }
@@ -59,9 +69,6 @@ public:
 	glm::mat4 MirrorCamMatrix;   //just for implement the mirror conveniently for now. I will add customized properties to material later.
 	void Bind_newmap_FBOTexUnit(Texture * tex);
 
-	void _PutInScene(QMouseEvent* e);
-
-
 	static glm::vec3 AmbientColor;
 
 private:
@@ -70,6 +77,6 @@ private:
 	void Add_Default_Parameter(Pass* pass);
 	void BindTex_Shader(GLint UniformLocation, int& Tex_Unit_number,Texture* map);
 	void FeedShader_tex(GLint UniformLocation, int& Tex_Unit_number, Texture* map, Texture* DefaultTex);
-	void _ReleaseTex(Texture* & tex);
+	void _ReleaseTex(Texture* tex);
 };
 

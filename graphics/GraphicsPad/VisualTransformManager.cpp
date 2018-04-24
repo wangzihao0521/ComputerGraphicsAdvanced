@@ -198,7 +198,7 @@ void VisualTransformManager::RenderMeshes(Mesh * x_msh, Mesh * y_msh, Mesh * z_m
 
 	uniformLocation = glGetUniformLocation(pass->getProgramID(), "Alpha");
 	if (uniformLocation >= 0)
-		glUniform1f(uniformLocation, 0.65);
+		glUniform1f(uniformLocation, 0.65f);
 
 	glBindVertexArray(x_msh->getVArrayID());
 	uniformLocation = glGetUniformLocation(pass->getProgramID(), "PureColor");

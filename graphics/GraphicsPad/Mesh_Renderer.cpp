@@ -69,9 +69,9 @@ void Mesh_Renderer::BindMaterial(GLint index, Material * mat)
 	Mesh* mesh = object->getComponent<class Mesh_Filter>()->getMesh();
 	if (MaterialArray[index])
 	{
-		Material* oldmat = MaterialArray[index];
+		//Material* oldmat = MaterialArray[index];
 		MaterialArray[index] = mat;
-		delete oldmat;
+		//delete oldmat;
 		return;
 	}
 	MaterialArray.push_back(mat);

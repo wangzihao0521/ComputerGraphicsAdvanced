@@ -96,7 +96,7 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 			{
 				Light* light_component = (*iter)->getComponent<Light>();
 				if (light_component)
-					light_component->AddIntensity(0.1);
+					light_component->AddIntensity(0.1f);
 			}
 			break;
 		}
@@ -107,7 +107,7 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 			{
 				Light* light_component = (*iter)->getComponent<Light>();
 				if (light_component)
-					light_component->AddIntensity(-0.1);
+					light_component->AddIntensity(-0.1f);
 			}
 			break;
 		}
@@ -161,7 +161,7 @@ void MeGlWindow::keyPressEvent(QKeyEvent * e)
 			renderer()->getMainCamera()->getComponent<Camera>()->ChangePJ_Mode();
 			break;
 		}
-		case Qt::Key::Key_Tab:
+		case Qt::Key::Key_Space:
 			renderer()->SwitchToNextLight();
 			break;
 		/*case Qt::Key::Key_T:

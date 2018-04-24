@@ -2,6 +2,7 @@
 #include "MeGlWindow.h"
 #include "FileWindow.h"
 #include "SceneObjManager.h"
+#include "ObjPropertiesManager.h"
 #include <QtGui\qmainwindow.h>
 #include <QtGui\qvboxlayout>
 #include <QtGui\qhboxlayout>
@@ -46,6 +47,7 @@ private:
 	MeGlWindow* GLWindow;
 	FileWindow* File_Window;
 	SceneObjManager* SceneObjManager_Window;
+	ObjPropertiesManager* ObjProperties_Window;
 
 	void CreateSceneGroupBox();
 	void CreateFileManagerGroupBox();
